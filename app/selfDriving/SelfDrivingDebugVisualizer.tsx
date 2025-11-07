@@ -46,7 +46,7 @@ export function SelfDrivingDebugVisualizer({
           direction: carDirection,
         })}
       >
-        <boxGeometry args={[2, 5, 4.3]} />
+        <boxGeometry args={[2, 3, 4.7]} />
         <meshStandardMaterial />
       </mesh>
 
