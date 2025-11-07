@@ -9,29 +9,11 @@ import { useColors } from "./useColors";
 import { useControls } from "leva";
 import { CityModel } from './CityModel';
 import { Fog } from './Fog';
-
-function CarExperience() {
-  const carColor = useColors();
-
-  return (
-    <>
-      {/* <Environment preset="sunset" /> */}
-
-      {/* <Environment preset="dawn" background /> */}
-
-      {/* <color args={[0, 0, 0]} attach="background" /> */}
-
-      <color args={ [ '#ffe8e8' ] } attach="background" />
-      <Environment preset="dawn" />
-      <Fog color="#ffe8e8" near={200} far={2000} />
-      <Ground />
-      <CityModel />
-      <ControllableCar color={carColor} startingPosition={new Vector3(156, 1, -70)} />
-    </>
-  );
-}
+import { WireframeToggle } from './WireframeToggle';
 
 export function Experience() {
+  const carColor = useColors();
+
   useControls(
     'Controls',
     {
@@ -65,8 +47,15 @@ export function Experience() {
             }}
           >
             {/* <Debug color="white" scale={1.1}> */}
-              <CarExperience />
+              <color args={ [ '#ffe8e8' ] } attach="background" />
+              <Environment preset="dawn" />
+              <Fog color="#ffe8e8" near={200} far={2000} />
+              <Ground />
+              <CityModel />
+              <ControllableCar color={carColor} startingPosition={new Vector3(156, 1, -70)} />
             {/* </Debug> */}
+
+            <WireframeToggle isEnabled={false} />
           </Physics>
         </Canvas>
       </KeyboardControls>
