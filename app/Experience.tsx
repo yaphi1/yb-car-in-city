@@ -8,6 +8,7 @@ import { Vector3 } from "three";
 import { useColors } from "./useColors";
 import { useControls } from "leva";
 import { CityModel } from './CityModel';
+import { Fog } from './Fog';
 
 function CarExperience() {
   const carColor = useColors();
@@ -16,14 +17,15 @@ function CarExperience() {
     <>
       {/* <Environment preset="sunset" /> */}
 
-      <Environment preset="dawn" background />
+      {/* <Environment preset="dawn" background /> */}
 
       {/* <color args={[0, 0, 0]} attach="background" /> */}
 
+      <color args={ [ '#ffe8e8' ] } attach="background" />
+      <Environment preset="dawn" />
+      <Fog color="#ffe8e8" near={200} far={2000} />
       <Ground />
-
       <CityModel />
-
       <ControllableCar color={carColor} startingPosition={new Vector3(156, 1, -70)} />
     </>
   );
@@ -55,7 +57,7 @@ export function Experience() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <KeyboardControls map={map}>
-        <Canvas shadows>
+        <Canvas dpr={window.devicePixelRatio}>
           <Physics
             broadphase="SAP"
             defaultContactMaterial={{
