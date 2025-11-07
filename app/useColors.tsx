@@ -27,7 +27,7 @@ function generatePresetControls(fn: ColorSetter) {
 export function useColors() {
   const [{ carColor }, set] = useControls(() => ({
     carColor: {
-      value: colorPresets.lime,
+      value: colorPresets.red,
       label: 'Car Color',
     },
     'Presets': buttonGroup(

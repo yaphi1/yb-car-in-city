@@ -7,50 +7,24 @@ import { Debug, Physics } from "@react-three/cannon";
 import { Vector3 } from "three";
 import { useColors } from "./useColors";
 import { useControls } from "leva";
+import { CityModel } from './CityModel';
 
-function CarShow() {
+function CarExperience() {
   const carColor = useColors();
 
   return (
     <>
-      <Environment preset="sunset" />
+      {/* <Environment preset="sunset" /> */}
 
-      <color args={[0, 0, 0]} attach="background" />
+      <Environment preset="dawn" background />
 
-      <spotLight
-        color={[1, 1, 1]}
-        position={[0, 30, 0]}
-        intensity={5000}
-        angle={Math.PI * 0.35}
-      />
-
-      <spotLight
-        color={[1, 0.25, 0.7]}
-        // color={[1, 1, 1]}
-        position={[5, 5, 0]}
-        // intensity={150}
-        intensity={1000}
-        angle={0.6}
-        penumbra={0.5}
-        castShadow
-        shadow-bias={-0.0001}
-      />
-
-      <spotLight
-        color={[0.14, 0.5, 1]}
-        // color={[1, 1, 1]}
-        position={[-5, 5, 0]}
-        // intensity={200}
-        intensity={1500}
-        angle={0.6}
-        penumbra={0.5}
-        castShadow
-        shadow-bias={-0.0001}
-      />
+      {/* <color args={[0, 0, 0]} attach="background" /> */}
 
       <Ground />
 
-      <ControllableCar color={carColor} startingPosition={new Vector3(-0.5, 1, 0)} />
+      <CityModel />
+
+      <ControllableCar color={carColor} startingPosition={new Vector3(156, 1, -70)} />
     </>
   );
 }
@@ -89,7 +63,7 @@ export function Experience() {
             }}
           >
             {/* <Debug color="white" scale={1.1}> */}
-              <CarShow />
+              <CarExperience />
             {/* </Debug> */}
           </Physics>
         </Canvas>

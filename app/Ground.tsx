@@ -5,6 +5,8 @@ import { useEffect, useRef } from "react";
 import { MeshStandardMaterial, RepeatWrapping, TextureLoader, Vector2 } from 'three';
 
 export function Ground() {
+
+  // this hook creates the physics plane that acts as the ground
   const [ref] = usePlane(
     () => ({
       type: 'Static',
@@ -26,16 +28,16 @@ export function Ground() {
     });
   }, [normal, roughness]);
 
-  return (
-    <mesh rotation-x={Math.PI * -0.5} castShadow receiveShadow>
-      <planeGeometry args={[120, 120]} />
-      <meshStandardMaterial
-        normalMap={normal}
-        normalScale={new Vector2(0.15, 0.15)}
-        roughnessMap={roughness}
-        roughness={0.7}
-        color={[0.015, 0.015, 0.015]}
-      />
-    </mesh>
+  return (<></>
+    // <mesh rotation-x={Math.PI * -0.5} castShadow receiveShadow>
+    //   <planeGeometry args={[520, 520]} />
+    //   {/* <meshStandardMaterial
+    //     normalMap={normal}
+    //     normalScale={new Vector2(0.15, 0.15)}
+    //     roughnessMap={roughness}
+    //     roughness={0.7}
+    //     color={[0.015, 0.015, 0.015]}
+    //   /> */}
+    // </mesh>
   );
 }
