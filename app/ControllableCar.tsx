@@ -8,10 +8,12 @@ import { WheelDebug } from "./WheelDebug";
 import { CarCamera } from "./CarCamera";
 import { PolestarCar } from "./PolestarCar";
 import { useSelfDriving } from './selfDriving/useSelfDriving';
+import { SelfDrivingDebugVisualizer } from './selfDriving/SelfDrivingDebugVisualizer';
 
 const carRenderPosition = new Vector3(0, 0, 0);
 const maxSteeringAngle = 0.35;
 const startingDirection = new Vector3(0, 0, -1);
+const startingVelocity = new Vector3(0, 0, 0);
 
 export function ControllableCar({ color = 0x5500aa, startingPosition = new Vector3(0, 0, 0) }: 
 {
@@ -19,6 +21,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
   startingPosition?: Vector3;
 }) {
   const speed = useRef(0);
+  const velocity = useRef(startingVelocity);
   const [position, setPosition] = useState(startingPosition);
   const [rotation, setRotation] = useState<Vector3>();
   const [horizontalDirection, setHorizontalDirection] = useState(startingDirection);
@@ -136,8 +139,9 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
   }, [setAcceleration, setBrake, forwardPressed, backwardPressed, brakePressed, isSelfDriving]);
 
   useEffect(() => {
-    chassisApi.velocity.subscribe((velocity) => {
-      const newSpeed = new Vector3(...velocity).length();
+    chassisApi.velocity.subscribe((newVelocity) => {
+      velocity.current = new Vector3(...newVelocity);
+      const newSpeed = velocity.current.length();
       speed.current = newSpeed;
     });
 
@@ -167,6 +171,12 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
   return (
     <>
       <CarCamera carPosition={position} carDirection={horizontalDirection} />
+
+      <SelfDrivingDebugVisualizer
+        carPosition={position}
+        carDirection={horizontalDirection}
+        carVelocity={velocity.current}
+      />
 
       <group ref={vehicle} name="vehicle">
 
