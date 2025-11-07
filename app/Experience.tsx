@@ -39,7 +39,7 @@ export function Experience() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <KeyboardControls map={map}>
-        <Canvas dpr={window.devicePixelRatio}>
+        <Canvas dpr={2}>
           <Physics
             broadphase="SAP"
             defaultContactMaterial={{

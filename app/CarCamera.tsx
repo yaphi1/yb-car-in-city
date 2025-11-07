@@ -7,11 +7,11 @@ import { useRef } from "react";
 const cameraTypes = {
   fixedFollow: 'fixedFollow',
   behind: 'behind',
+  topDown: 'topDown',
   free: 'free',
-  tower: 'tower',
 };
 
-const startingCameraPosition = new Vector3(-0.5, 0, 0.75);
+const fixedFollowCameraDirection = new Vector3(-0.5, 0, 0.75);
 
 type CarCameraProps = {
   carPosition: Vector3;
@@ -24,10 +24,10 @@ export function CarCamera({ carPosition, carDirection }: CarCameraProps) {
     cameraType: {
       label: 'Camera',
       options: {
+        'Top Down': cameraTypes.topDown,
         'Fixed Follow': cameraTypes.fixedFollow,
         'Behind': cameraTypes.behind,
         'Free Cam': cameraTypes.free,
-        'Tower': cameraTypes.tower,
       },
       transient: false,
       onChange: () => {
@@ -39,11 +39,17 @@ export function CarCamera({ carPosition, carDirection }: CarCameraProps) {
   return (
     <>
       {cameraType === cameraTypes.free && <OrbitControls target={[0, 0.35, 0]} maxPolarAngle={1.45} />}
-      {cameraType === cameraTypes.tower && <OrbitControls target={carPosition} maxPolarAngle={1.45} />}
+      {cameraType === cameraTypes.topDown && (
+        <group
+          position={carPosition}
+        >
+          <PerspectiveCamera position={[0, 40, 0]} rotation={[-Math.PI / 2, 0, 0]} makeDefault fov={50} />
+        </group>
+      )}
       {cameraType === cameraTypes.fixedFollow && (
         <group
           position={carPosition}
-          quaternion={setQuaternionFromDirection({ direction: startingCameraPosition } )}
+          quaternion={setQuaternionFromDirection({ direction: fixedFollowCameraDirection } )}
         >
           <PerspectiveCamera position={[0, 0.5, 6]} makeDefault fov={50} />
         </group>

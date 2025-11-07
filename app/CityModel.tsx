@@ -72,11 +72,11 @@ export function CityModel(props: JSX.IntrinsicElements['group']) {
         texture.anisotropy = gl.capabilities.getMaxAnisotropy();
       }
     });
-  }, [materials]);
+  }, [materials, gl.capabilities]);
 
   useEffect(() => {
     reduceRoadBlur();
-  }, []);
+  }, [reduceRoadBlur]);
 
   return (
     <group {...props} dispose={null}>

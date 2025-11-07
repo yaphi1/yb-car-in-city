@@ -7,6 +7,7 @@ import { useWheels } from "./useWheels";
 import { WheelDebug } from "./WheelDebug";
 import { CarCamera } from "./CarCamera";
 import { PolestarCar } from "./PolestarCar";
+import { useSelfDriving } from './selfDriving/useSelfDriving';
 
 const carRenderPosition = new Vector3(0, 0, 0);
 const maxSteeringAngle = 0.35;
@@ -74,7 +75,31 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
     setSteeringValue(nextSteeringValue);
   }, [setSteeringValue, vehicleApi]);
 
-  useFrame(() => {
+  const { isSelfDriving } = useSelfDriving({
+    setAcceleration,
+    setBrake,
+    updateSteering,
+  });
+
+  const runAntiLockBrakes = useCallback(() => {
+    isAntiLockBrakeClamped.current = !isAntiLockBrakeClamped.current;
+    const brakeForce = isAntiLockBrakeClamped.current ? 10 : 0;
+    setBrake({ force: brakeForce });
+  }, [setBrake]);
+
+  const tryToCoast = useCallback(() => {
+    const isNotAccelerating = !forwardPressed && !backwardPressed;
+    const shouldCarRest = speed.current < 0.5 && isNotAccelerating;
+    if (shouldCarRest) {
+      isAntiLockBrakeClamped.current = true;
+      setBrake({ force: 10 });
+    } else {
+      isAntiLockBrakeClamped.current = false;
+      setBrake({ force: 0 });
+    }
+  }, [forwardPressed, backwardPressed, setBrake]);
+
+  const steerWhenPressed = useCallback(() => {
     let targetSteeringValue = 0;
     if (leftPressed && !rightPressed) {
       targetSteeringValue = MathUtils.lerp(steeringValue, maxSteeringAngle, 0.2);
@@ -84,27 +109,19 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
       targetSteeringValue = MathUtils.lerp(steeringValue, 0, 0.2);
     }
     updateSteering(targetSteeringValue);
+  }, [leftPressed, rightPressed, steeringValue, updateSteering]);
 
-    if (brakePressed) {
-      isAntiLockBrakeClamped.current = !isAntiLockBrakeClamped.current;
-      const brakeForce = isAntiLockBrakeClamped.current ? 10 : 0;
-      setBrake({ force: brakeForce });
-    }
-
-    if (!brakePressed) {
-      const isNotAccelerating = !forwardPressed && !backwardPressed;
-      const shouldCarRest = speed.current < 0.5 && isNotAccelerating;
-      if (shouldCarRest) {
-        isAntiLockBrakeClamped.current = true;
-        setBrake({ force: 10 });
-      } else {
-        isAntiLockBrakeClamped.current = false;
-        setBrake({ force: 0 });
-      }
-    }
+  useFrame(() => {
+    if (isSelfDriving) { return; }
+    steerWhenPressed();
+    if (brakePressed) { runAntiLockBrakes(); }
+    if (!brakePressed) { tryToCoast(); }
   });
 
   useEffect(() => {
+    if (isSelfDriving) {
+      return;
+    }
     if (forwardPressed && !backwardPressed) {
       setBrake({ force: 0 });
       setAcceleration({ force: 500 });
@@ -116,7 +133,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
     if (!forwardPressed && !backwardPressed) {
       setAcceleration({ force: 0 });
     }
-  }, [setAcceleration, setBrake, forwardPressed, backwardPressed, brakePressed]);
+  }, [setAcceleration, setBrake, forwardPressed, backwardPressed, brakePressed, isSelfDriving]);
 
   useEffect(() => {
     chassisApi.velocity.subscribe((velocity) => {
