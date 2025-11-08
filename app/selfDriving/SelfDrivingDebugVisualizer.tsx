@@ -6,10 +6,12 @@ export function SelfDrivingDebugVisualizer({
   carPosition,
   carDirection,
   carVelocity,
+  selfDrivingTargets,
 } : {
   carPosition: Vector3;
   carDirection: Vector3;
   carVelocity: Vector3;
+  selfDrivingTargets?: Array<Vector3>;
 }) {
   return (
     <>
@@ -35,6 +37,15 @@ export function SelfDrivingDebugVisualizer({
         length={carVelocity.length()}
         color="red"
       />
+
+      {selfDrivingTargets?.map((selfDrivingTarget, index) => {
+        return (
+          <mesh key={index} position={selfDrivingTarget}>
+            <sphereGeometry args={[2, 8, 8]} />
+            <meshStandardMaterial name="self_driving_targets" />
+          </mesh>
+        );
+      })}
     </>
   );
 }

@@ -5,6 +5,10 @@ import { MathUtils, Vector3 } from 'three';
 
 const speedLimit = 5;
 
+const selfDrivingTargets = [
+  new Vector3(147, 0, -122),
+];
+
 export function useSelfDriving({
   setAcceleration,
   setBrake,
@@ -52,9 +56,9 @@ export function useSelfDriving({
       position.x > 170 ||
       position.x < 135
     ;
-    const targetSteeringValue = isAtBoundary ? maxSteeringAngle : 0;
+    const selfDrivingTargetSteeringValue = isAtBoundary ? maxSteeringAngle : 0;
     const lerpFactor = 6 * delta;
-    const updatedSteeringValue = MathUtils.lerp(steeringValue, targetSteeringValue, lerpFactor);
+    const updatedSteeringValue = MathUtils.lerp(steeringValue, selfDrivingTargetSteeringValue, lerpFactor);
 
     updateSteering(updatedSteeringValue);
   }, [
@@ -71,5 +75,8 @@ export function useSelfDriving({
     }
   }, [isSelfDriving, autoAccelerate, autoTurn]);
 
-  return { isSelfDriving };
+  return {
+    isSelfDriving,
+    selfDrivingTargets,
+  };
 }
