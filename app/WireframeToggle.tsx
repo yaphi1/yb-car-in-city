@@ -1,11 +1,44 @@
 import { useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
 import * as THREE from 'three';
+import { globalSettings, VIEW_MODES } from './globalSettings';
 
 type MaterialType = THREE.MeshStandardMaterial | Array<THREE.MeshStandardMaterial>;
 
-export function WireframeToggle({ isEnabled }: { isEnabled: boolean; }) {
+const roadMaterialNames = [
+  'sidewalk_efficient',
+  'sidewalk_corner',
+  'road',
+  'road_crosswalk',
+  'pavement',
+];
+const visualizerMaterialNames = [
+  'car_box_template',
+];
+const nonWireframesInMathMode = [
+  ...roadMaterialNames,
+  ...visualizerMaterialNames,
+];
+
+const isMathMode = globalSettings.viewMode === VIEW_MODES.MATH_MODE;
+const isWireframeMode = globalSettings.viewMode === VIEW_MODES.WIREFRAME_3D;
+
+function setWireframe({ material } : { material: THREE.MeshStandardMaterial }) {
+
+  if (isWireframeMode) {
+    material.wireframe = true;
+  } else if (isMathMode) {
+    const shouldBeWireframe = !nonWireframesInMathMode.includes(material.name);
+    material.wireframe = shouldBeWireframe;
+  }
+}
+
+export function WireframeToggle() {
   const { scene } = useThree();
+
+  const isEnabled = globalSettings.viewMode === VIEW_MODES.MATH_MODE ||
+    globalSettings.viewMode === VIEW_MODES.WIREFRAME_3D
+  ;
 
   useEffect(() => {
     scene.traverse((obj: THREE.Object3D) => {
@@ -15,9 +48,10 @@ export function WireframeToggle({ isEnabled }: { isEnabled: boolean; }) {
         if (Array.isArray(material)) {
           material.forEach((mat) => {
             mat.wireframe = isEnabled;
+            setWireframe({ material: mat });
           });
         } else {
-          material.wireframe = isEnabled;
+          setWireframe({ material });
         }
       }
     });

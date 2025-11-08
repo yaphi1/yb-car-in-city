@@ -55,7 +55,7 @@ export function Experience() {
               <ControllableCar color={carColor} startingPosition={new Vector3(156, 1, -70)} />
             {/* </Debug> */}
 
-            <WireframeToggle isEnabled={false} />
+            <WireframeToggle />
           </Physics>
         </Canvas>
       </KeyboardControls>

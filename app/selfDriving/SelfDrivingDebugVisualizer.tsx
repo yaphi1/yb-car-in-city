@@ -1,4 +1,4 @@
-import { Vector3, ArrowHelper, Color } from 'three';
+import { Vector3, ArrowHelper } from 'three';
 import { useMemo } from 'react';
 import { setQuaternionFromDirection } from '../helpers/vectorHelpers';
 
@@ -47,7 +47,7 @@ export function SelfDrivingDebugVisualizer({
         })}
       >
         <boxGeometry args={[2, 3, 4.7]} />
-        <meshStandardMaterial />
+        <meshStandardMaterial name="car_box_template" />
       </mesh>
 
       <Arrow
