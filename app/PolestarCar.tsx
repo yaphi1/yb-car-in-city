@@ -124,23 +124,15 @@ function orientObjectTheSameWayAsCar(
 
 export function PolestarCar({
   color = 0x5500aa,
-  speed = 0,
   chassisBodyRef,
-  carRenderPosition,
-  carRotation = new THREE.Vector3(0, 0, 0),
-  horizontalDirection,
   steeringValue = 0,
   wheelRefs,
   ...props
 } : {
   color?: THREE.ColorRepresentation;
-  speed?: number;
   chassisBodyRef?: RefObject<THREE.Group<THREE.Object3DEventMap>>;
   wheelRefs: Array<RefObject<THREE.Group<THREE.Object3DEventMap>>>;
-  carRenderPosition?: THREE.Vector3;
   position?: THREE.Vector3;
-  carRotation?: THREE.Vector3;
-  horizontalDirection: THREE.Vector3;
   steeringValue?: number;
 } & GroupProps) {
   const { nodes, materials } = useGLTF('/models/polestar_modified/polestar_custom.glb') as GLTFResult;

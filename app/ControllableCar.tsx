@@ -203,10 +203,6 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
         <group>
           <PolestarCar
             color={color}
-            speed={speed.current}
-            carRenderPosition={carRenderPosition}
-            carRotation={rotation}
-            horizontalDirection={horizontalDirection}
             steeringValue={steeringValue.current}
             position={position}
             chassisBodyRef={chassisBody}
