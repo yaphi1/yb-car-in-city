@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import { Canvas } from '@react-three/fiber';
 import { Environment, KeyboardControls, OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { Ground } from "./Ground";
@@ -7,7 +7,6 @@ import { Debug, Physics } from "@react-three/cannon";
 import { Vector3 } from "three";
 import { useColors } from "./useColors";
 import { useControls } from "leva";
-import { CityModel } from './CityModel';
 import { Fog } from './Fog';
 import { WireframeToggle } from './WireframeToggle';
 import { CityTileModel } from './CityTileModel';
@@ -37,6 +36,25 @@ export function Experience() {
     { name: 'brake', keys: ['b', ' '] },
   ];
 
+  const cityTiles = useMemo(() => {
+    const xCols = 6;
+    const zRows = 20;
+    const xStart = -Math.floor(xCols / 2);
+    const zStart = -Math.floor(xCols / 2);
+
+    const tiles = [];
+
+    for (let x = xStart; x < xCols; x++) {
+      for (let z = zStart; z < zRows; z++) {
+        tiles.push(
+          <CityTileModel key={`x${x}_z${z}`} position={[x * 604, 0, z * 224]} />
+        );
+      }
+    }
+
+    return tiles;
+  }, []);
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <KeyboardControls map={map}>
@@ -52,9 +70,7 @@ export function Experience() {
               <Environment preset="dawn" />
               <Fog color="#ffe8e8" near={200} far={2000} />
               <Ground />
-              {/* <CityModel /> */}
-              <CityTileModel position={[0, 0, 0]} />
-              <CityTileModel position={[604, 0, 0]} />
+              {cityTiles}
               <ControllableCar color={carColor} startingPosition={new Vector3(156, 1, -70)} />
             {/* </Debug> */}
 

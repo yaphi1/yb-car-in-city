@@ -24,7 +24,6 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
   const speed = useRef(0);
   const velocity = useRef(startingVelocity);
 
-  // update to use refs
   const [position, setPosition] = useState(startingPosition);
   const [rotation, setRotation] = useState<Vector3>();
   const [horizontalDirection, setHorizontalDirection] = useState(startingDirection);
