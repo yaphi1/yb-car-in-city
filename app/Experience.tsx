@@ -10,6 +10,7 @@ import { useControls } from "leva";
 import { CityModel } from './CityModel';
 import { Fog } from './Fog';
 import { WireframeToggle } from './WireframeToggle';
+import { CityTileModel } from './CityTileModel';
 
 export function Experience() {
   const carColor = useColors();
@@ -51,7 +52,9 @@ export function Experience() {
               <Environment preset="dawn" />
               <Fog color="#ffe8e8" near={200} far={2000} />
               <Ground />
-              <CityModel />
+              {/* <CityModel /> */}
+              <CityTileModel position={[0, 0, 0]} />
+              <CityTileModel position={[604, 0, 0]} />
               <ControllableCar color={carColor} startingPosition={new Vector3(156, 1, -70)} />
             {/* </Debug> */}
 
