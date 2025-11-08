@@ -15,11 +15,13 @@ type GraphicsModesType = keyof typeof GRAPHICS_MODES;
 type CameraModesType = keyof typeof CAMERA_MODES;
 
 type GlobalSettings = {
-  viewMode: GraphicsModesType;
+  graphicsMode: GraphicsModesType;
   cameraMode: CameraModesType;
+  showCarDebugNumbers: boolean;
 };
 
 export const globalSettings: GlobalSettings = {
-  viewMode: GRAPHICS_MODES.FULL_3D,
+  graphicsMode: GRAPHICS_MODES.FULL_3D,
   cameraMode: CAMERA_MODES.BEHIND,
+  showCarDebugNumbers: true,
 };

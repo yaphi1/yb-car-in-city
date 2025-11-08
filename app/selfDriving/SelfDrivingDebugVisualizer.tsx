@@ -27,15 +27,6 @@ export function SelfDrivingDebugVisualizer({
   carDirection: Vector3;
   carVelocity: Vector3;
 }) {
-
-  // Deliberately ignore TypeScript warnings about adding custom properties to window
-  // This whole file is for debugging, not prod.
-  const win = window as any;
-  win.carPosition = carPosition;
-  win.carDirection = carDirection;
-  win.carVelocity = carVelocity;
-  win.carSpeed = carVelocity.length();
-
   return (
     <>
       <mesh

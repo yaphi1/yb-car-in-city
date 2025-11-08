@@ -20,8 +20,8 @@ const nonWireframesInMathMode = [
   ...visualizerMaterialNames,
 ];
 
-const isMathMode = globalSettings.viewMode === GRAPHICS_MODES.MATH_MODE;
-const isWireframeMode = globalSettings.viewMode === GRAPHICS_MODES.WIREFRAME_3D;
+const isMathMode = globalSettings.graphicsMode === GRAPHICS_MODES.MATH_MODE;
+const isWireframeMode = globalSettings.graphicsMode === GRAPHICS_MODES.WIREFRAME_3D;
 
 function setWireframe({ material } : { material: THREE.MeshStandardMaterial }) {
 
@@ -36,8 +36,8 @@ function setWireframe({ material } : { material: THREE.MeshStandardMaterial }) {
 export function WireframeToggle() {
   const { scene } = useThree();
 
-  const isEnabled = globalSettings.viewMode === GRAPHICS_MODES.MATH_MODE ||
-    globalSettings.viewMode === GRAPHICS_MODES.WIREFRAME_3D
+  const isEnabled = globalSettings.graphicsMode === GRAPHICS_MODES.MATH_MODE ||
+    globalSettings.graphicsMode === GRAPHICS_MODES.WIREFRAME_3D
   ;
 
   useEffect(() => {

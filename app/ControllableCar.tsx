@@ -25,7 +25,6 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
   const velocity = useRef(startingVelocity);
 
   const [position, setPosition] = useState(startingPosition);
-  const [rotation, setRotation] = useState<Vector3>();
   const [horizontalDirection, setHorizontalDirection] = useState(startingDirection);
   const steeringValue = useRef(0);
 
@@ -157,11 +156,6 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
       const positionVector = new Vector3(...position);
       setPosition(positionVector);
     });
-    
-    chassisApi.rotation.subscribe((rotation) => {
-      const rotationVector = new Vector3(...rotation);
-      setRotation(rotationVector);
-    });
 
     chassisApi.quaternion.subscribe((quaternion) => {
       // To get direction from quatnerion:
@@ -176,11 +170,21 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
     });
   }, [chassisApi]);
 
+  // Deliberately ignore TypeScript warnings about adding custom properties to window
+  // This is for debugging, not prod.
+  if (globalSettings.showCarDebugNumbers) {
+    const win = window as any;
+    win.carPosition = position;
+    win.carDirection = horizontalDirection;
+    win.carVelocity = velocity.current;
+    win.carSpeed = speed.current;
+  }
+
   return (
     <>
       <CarCamera carPosition={position} carDirection={horizontalDirection} />
 
-      {globalSettings.viewMode === GRAPHICS_MODES.MATH_MODE && (
+      {globalSettings.graphicsMode === GRAPHICS_MODES.MATH_MODE && (
         <SelfDrivingDebugVisualizer
           carPosition={position}
           carDirection={horizontalDirection}
