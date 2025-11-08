@@ -28,7 +28,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
   const [position, setPosition] = useState(startingPosition);
   const [rotation, setRotation] = useState<Vector3>();
   const [horizontalDirection, setHorizontalDirection] = useState(startingDirection);
-  const [steeringValue, setSteeringValue] = useState(0);
+  const steeringValue = useRef(0);
 
   const forwardPressed = useKeyboardControls(state => state.forward);
   const backwardPressed = useKeyboardControls(state => state.backward);
@@ -79,8 +79,8 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
   const updateSteering = useCallback((nextSteeringValue: number) => {
     vehicleApi.setSteeringValue(nextSteeringValue, 0);
     vehicleApi.setSteeringValue(nextSteeringValue, 1);
-    setSteeringValue(nextSteeringValue);
-  }, [setSteeringValue, vehicleApi]);
+    steeringValue.current = nextSteeringValue;
+  }, [vehicleApi]);
 
   const { isSelfDriving } = useSelfDriving({
     setAcceleration,
@@ -88,7 +88,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
     updateSteering,
     velocity: velocity.current,
     position,
-    steeringValue,
+    steeringValue: steeringValue.current,
     maxSteeringAngle,
   });
 
@@ -113,14 +113,14 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
   const steerWhenPressed = useCallback(() => {
     let targetSteeringValue = 0;
     if (leftPressed && !rightPressed) {
-      targetSteeringValue = MathUtils.lerp(steeringValue, maxSteeringAngle, 0.2);
+      targetSteeringValue = MathUtils.lerp(steeringValue.current, maxSteeringAngle, 0.2);
     } else if (rightPressed && !leftPressed) {
-      targetSteeringValue = MathUtils.lerp(steeringValue, -maxSteeringAngle, 0.2);
+      targetSteeringValue = MathUtils.lerp(steeringValue.current, -maxSteeringAngle, 0.2);
     } else {
-      targetSteeringValue = MathUtils.lerp(steeringValue, 0, 0.2);
+      targetSteeringValue = MathUtils.lerp(steeringValue.current, 0, 0.2);
     }
     updateSteering(targetSteeringValue);
-  }, [leftPressed, rightPressed, steeringValue, updateSteering]);
+  }, [leftPressed, rightPressed, updateSteering]);
 
   useFrame(() => {
     if (isSelfDriving) { return; }
@@ -207,7 +207,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
             carRenderPosition={carRenderPosition}
             carRotation={rotation}
             horizontalDirection={horizontalDirection}
-            steeringValue={steeringValue}
+            steeringValue={steeringValue.current}
             position={position}
             chassisBodyRef={chassisBody}
             rotation-y={Math.PI}
