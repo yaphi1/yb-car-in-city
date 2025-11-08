@@ -9,13 +9,11 @@ function Arrow({ direction, position, length, color } : {
   color: string;
 }) {
   const arrow = useMemo(() => {
-    const arrowPosition = position.clone();
-    arrowPosition.y = 20;
+    const arrowPosition = new Vector3(position.x, 20, position.z);
     const headLength = 0.2 * length;
     const headWidth = 0.4 * headLength;
     return new ArrowHelper(direction, arrowPosition, length, color, headLength, headWidth);
-  // depend on numeric components to avoid unstable object references
-  }, [position.x, position.y, position.z, direction.x, direction.y, direction.z]);
+  }, [position.x, position.z, direction, color, length]);
 
   return <primitive object={arrow} />;
 }

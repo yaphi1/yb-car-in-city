@@ -1,6 +1,6 @@
 # TODO
 
-- Scaffold basic auto-steering (just steering ability, no special logic yet)
+- Lerp steering to avoid abruptness
 - Steer towards target (position or direction?)
 - Show targets in debug mode
 - Create test path

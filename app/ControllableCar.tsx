@@ -84,6 +84,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
     setBrake,
     updateSteering,
     velocity: velocity.current,
+    position,
   });
 
   const runAntiLockBrakes = useCallback(() => {

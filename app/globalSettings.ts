@@ -11,5 +11,5 @@ type GlobalSettings = {
 };
 
 export const globalSettings: GlobalSettings = {
-  viewMode: VIEW_MODES.MATH_MODE,
+  viewMode: VIEW_MODES.WIREFRAME_3D,
 };
