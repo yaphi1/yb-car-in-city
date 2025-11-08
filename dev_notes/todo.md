@@ -1,6 +1,6 @@
 # TODO
 
-- Use refs for car values
+- Tile the city
 - Lerp steering to avoid abruptness
 - Steer towards target (position or direction?)
 - Show targets in debug mode

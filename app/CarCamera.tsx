@@ -3,6 +3,7 @@ import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { useControls } from "leva";
 import { setQuaternionFromDirection } from "./helpers/vectorHelpers";
 import { useRef } from "react";
+import { globalSettings, VIEW_MODES } from './globalSettings';
 
 const cameraTypes = {
   fixedFollow: 'fixedFollow',
@@ -18,6 +19,8 @@ type CarCameraProps = {
   carDirection: Vector3;
 };
 
+const isMathMode = globalSettings.viewMode === VIEW_MODES.MATH_MODE;
+
 export function CarCamera({ carPosition, carDirection }: CarCameraProps) {
   const main = useRef(document.querySelector('main'));
   const { cameraType } = useControls({
@@ -29,6 +32,7 @@ export function CarCamera({ carPosition, carDirection }: CarCameraProps) {
         'Behind': cameraTypes.behind,
         'Free Cam': cameraTypes.free,
       },
+      value: isMathMode ? cameraTypes.topDown : cameraTypes.fixedFollow,
       transient: false,
       onChange: () => {
         main.current?.focus();
