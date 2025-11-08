@@ -1,6 +1,6 @@
 import { useControls } from 'leva';
 import { useCallback, useEffect } from 'react';
-import { Vector3 } from 'three';
+import { MathUtils, Vector3 } from 'three';
 
 const speedLimit = 5;
 
@@ -10,12 +10,16 @@ export function useSelfDriving({
   updateSteering,
   velocity,
   position,
+  steeringValue,
+  maxSteeringAngle,
 } : {
   setAcceleration: ({ force }: { force: number; }) => void;
   setBrake: ({ force }: { force: number; }) => void;
   updateSteering: (nextSteeringValue: number) => void;
   velocity: Vector3;
   position: Vector3;
+  steeringValue: number;
+  maxSteeringAngle: number;
 }) {
   const { isSelfDriving } = useControls({
     isSelfDriving: {
@@ -36,10 +40,12 @@ export function useSelfDriving({
   }, [speed, setAcceleration, setBrake]);
 
   const turn = useCallback((targetSteeringValue: number) => {
-    // const targetSteeringValue = MathUtils.lerp(steeringValue, maxSteeringAngle, 0.2);
-    // const targetSteeringValue = 1;
-    updateSteering(targetSteeringValue);
-  }, [updateSteering]);
+    // this needs a time delta; otherwise it'll look instant anyway
+    // before touching this, go to ControllableCar and use refs instead of state
+    const updatedSteeringValue = MathUtils.lerp(steeringValue, targetSteeringValue, 0.2);
+
+    updateSteering(updatedSteeringValue);
+  }, [updateSteering, steeringValue]);
 
   const autoTurn = useCallback(() => {
     const isAtBoundary = position.z < -120 ||
@@ -48,7 +54,7 @@ export function useSelfDriving({
       position.x < 135
     ;
     if (isAtBoundary) {
-      turn(1);
+      turn(maxSteeringAngle);
     } else {
       turn(0);
     }

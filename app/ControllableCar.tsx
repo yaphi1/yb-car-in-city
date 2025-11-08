@@ -23,10 +23,13 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
 }) {
   const speed = useRef(0);
   const velocity = useRef(startingVelocity);
+
+  // update to use refs
   const [position, setPosition] = useState(startingPosition);
   const [rotation, setRotation] = useState<Vector3>();
   const [horizontalDirection, setHorizontalDirection] = useState(startingDirection);
   const [steeringValue, setSteeringValue] = useState(0);
+
   const forwardPressed = useKeyboardControls(state => state.forward);
   const backwardPressed = useKeyboardControls(state => state.backward);
   const leftPressed = useKeyboardControls(state => state.left);
@@ -85,6 +88,8 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
     updateSteering,
     velocity: velocity.current,
     position,
+    steeringValue,
+    maxSteeringAngle,
   });
 
   const runAntiLockBrakes = useCallback(() => {
