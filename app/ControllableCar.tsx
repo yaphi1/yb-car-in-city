@@ -109,21 +109,22 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
     }
   }, [forwardPressed, backwardPressed, setBrake]);
 
-  const steerWhenPressed = useCallback(() => {
+  const steerWhenPressed = useCallback(({ delta } : { delta: number }) => {
     let targetSteeringValue = 0;
+    const lerpFactor = 10 * delta;
     if (leftPressed && !rightPressed) {
-      targetSteeringValue = MathUtils.lerp(steeringValue.current, maxSteeringAngle, 0.2);
+      targetSteeringValue = MathUtils.lerp(steeringValue.current, maxSteeringAngle, lerpFactor);
     } else if (rightPressed && !leftPressed) {
-      targetSteeringValue = MathUtils.lerp(steeringValue.current, -maxSteeringAngle, 0.2);
+      targetSteeringValue = MathUtils.lerp(steeringValue.current, -maxSteeringAngle, lerpFactor);
     } else {
-      targetSteeringValue = MathUtils.lerp(steeringValue.current, 0, 0.2);
+      targetSteeringValue = MathUtils.lerp(steeringValue.current, 0, lerpFactor);
     }
     updateSteering(targetSteeringValue);
   }, [leftPressed, rightPressed, updateSteering]);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (isSelfDriving) { return; }
-    steerWhenPressed();
+    steerWhenPressed({ delta });
     if (brakePressed) { runAntiLockBrakes(); }
     if (!brakePressed) { tryToCoast(); }
   });

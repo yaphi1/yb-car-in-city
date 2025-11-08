@@ -53,7 +53,7 @@ export function useSelfDriving({
       position.x < 135
     ;
     const targetSteeringValue = isAtBoundary ? maxSteeringAngle : 0;
-    const lerpFactor = 5 * delta;
+    const lerpFactor = 6 * delta;
     const updatedSteeringValue = MathUtils.lerp(steeringValue, targetSteeringValue, lerpFactor);
 
     updateSteering(updatedSteeringValue);
