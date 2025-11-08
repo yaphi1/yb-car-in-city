@@ -1,4 +1,4 @@
-export const VIEW_MODES = {
+export const GRAPHICS_MODES = {
   MATH_MODE: 'MATH_MODE',
   WIREFRAME_3D: 'WIREFRAME_3D',
   FULL_3D: 'FULL_3D',
@@ -11,15 +11,15 @@ export const CAMERA_MODES = {
   FREE: 'FREE',
 } as const;
 
-type ViewModesType = keyof typeof VIEW_MODES;
+type GraphicsModesType = keyof typeof GRAPHICS_MODES;
 type CameraModesType = keyof typeof CAMERA_MODES;
 
 type GlobalSettings = {
-  viewMode: ViewModesType;
+  viewMode: GraphicsModesType;
   cameraMode: CameraModesType;
 };
 
 export const globalSettings: GlobalSettings = {
-  viewMode: VIEW_MODES.FULL_3D,
+  viewMode: GRAPHICS_MODES.FULL_3D,
   cameraMode: CAMERA_MODES.BEHIND,
 };

@@ -1,7 +1,7 @@
 import { useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
 import * as THREE from 'three';
-import { globalSettings, VIEW_MODES } from './globalSettings';
+import { globalSettings, GRAPHICS_MODES } from './globalSettings';
 
 type MaterialType = THREE.MeshStandardMaterial | Array<THREE.MeshStandardMaterial>;
 
@@ -20,8 +20,8 @@ const nonWireframesInMathMode = [
   ...visualizerMaterialNames,
 ];
 
-const isMathMode = globalSettings.viewMode === VIEW_MODES.MATH_MODE;
-const isWireframeMode = globalSettings.viewMode === VIEW_MODES.WIREFRAME_3D;
+const isMathMode = globalSettings.viewMode === GRAPHICS_MODES.MATH_MODE;
+const isWireframeMode = globalSettings.viewMode === GRAPHICS_MODES.WIREFRAME_3D;
 
 function setWireframe({ material } : { material: THREE.MeshStandardMaterial }) {
 
@@ -36,8 +36,8 @@ function setWireframe({ material } : { material: THREE.MeshStandardMaterial }) {
 export function WireframeToggle() {
   const { scene } = useThree();
 
-  const isEnabled = globalSettings.viewMode === VIEW_MODES.MATH_MODE ||
-    globalSettings.viewMode === VIEW_MODES.WIREFRAME_3D
+  const isEnabled = globalSettings.viewMode === GRAPHICS_MODES.MATH_MODE ||
+    globalSettings.viewMode === GRAPHICS_MODES.WIREFRAME_3D
   ;
 
   useEffect(() => {

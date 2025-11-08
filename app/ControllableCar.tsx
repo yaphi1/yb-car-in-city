@@ -9,7 +9,7 @@ import { CarCamera } from "./CarCamera";
 import { PolestarCar } from "./PolestarCar";
 import { useSelfDriving } from './selfDriving/useSelfDriving';
 import { SelfDrivingDebugVisualizer } from './selfDriving/SelfDrivingDebugVisualizer';
-import { globalSettings, VIEW_MODES } from './globalSettings';
+import { globalSettings, GRAPHICS_MODES } from './globalSettings';
 
 const carRenderPosition = new Vector3(0, 0, 0);
 const maxSteeringAngle = 0.35;
@@ -180,7 +180,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
     <>
       <CarCamera carPosition={position} carDirection={horizontalDirection} />
 
-      {globalSettings.viewMode === VIEW_MODES.MATH_MODE && (
+      {globalSettings.viewMode === GRAPHICS_MODES.MATH_MODE && (
         <SelfDrivingDebugVisualizer
           carPosition={position}
           carDirection={horizontalDirection}
