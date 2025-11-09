@@ -72,6 +72,7 @@ export function Experience() {
               <Ground />
               {cityTiles}
               <ControllableCar color={carColor} startingPosition={new Vector3(156, 1, -70)} />
+              {/* <ControllableCar color={carColor} startingPosition={new Vector3(148, 1, -80)} /> */}
             {/* </Debug> */}
 
             <WireframeToggle />

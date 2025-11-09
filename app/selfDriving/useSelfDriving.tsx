@@ -27,6 +27,24 @@ const pathsToNextCheckpoints = checkpoints.map((checkpoint, i) => {
   return pathToNextCheckpoint;
 });
 
+function detectOrbit({ position, velocity, desiredVelocity, target } : {
+  position: Vector3;
+  velocity: Vector3;
+  desiredVelocity: Vector3;
+  target: Vector3;
+}) {
+  const angleToTarget = velocity.angleTo(desiredVelocity);
+  const distanceToTarget = position.distanceTo(target);
+  const magnitudeOfDesiredVelocity = desiredVelocity.length();
+
+  const isCloseEnoughToTarget = distanceToTarget <= magnitudeOfDesiredVelocity;
+  const hasOrbitAngle = Math.PI - 0.1 < angleToTarget && angleToTarget < Math.PI + 0.1;
+
+  const isOrbiting = isCloseEnoughToTarget && hasOrbitAngle;
+
+  return isOrbiting;
+}
+
 export function useSelfDriving({
   setAcceleration,
   setBrake,
@@ -52,6 +70,7 @@ export function useSelfDriving({
     },
   });
   const targetIndex = useRef(0);
+  const isOrbiting = useRef(false);
 
   const speed = velocity?.length() ?? 0;
 

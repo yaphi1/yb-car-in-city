@@ -4,6 +4,6 @@
   - Steer towards path normal
   - Check next checkpoint
   - Use more checkpoints
-- Consider variable speed for straightaways
+- Generalize seek function to take a target
 - Make auto path generation
 - Consider obstacle avoidance
