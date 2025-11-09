@@ -66,7 +66,16 @@ export function useSelfDriving({
     const angleToTarget = velocity.angleTo(desiredVelocity.current);
     typedWindow.angleToTarget = angleToTarget;
 
-    const targetSteeringValue = angleToTarget > 0.1 ? maxSteeringAngle : 0;
+    /** perpendicular up vector from a counterclockwise sweep from vector a to b */
+    const crossProduct = new Vector3().crossVectors(
+      desiredVelocity.current,
+      velocity
+    );
+    const streeringDirection = -Math.sign(crossProduct.y);
+
+    const turnAngle = streeringDirection * maxSteeringAngle;
+
+    const targetSteeringValue = angleToTarget > 0.05 ? turnAngle : 0;
     const lerpFactor = 6 * delta;
     const updatedSteeringValue = MathUtils.lerp(steeringValue, targetSteeringValue, lerpFactor);
 
