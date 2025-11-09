@@ -10,7 +10,6 @@ import { PolestarCar } from "./PolestarCar";
 import { useSelfDriving } from './selfDriving/useSelfDriving';
 import { SelfDrivingDebugVisualizer } from './selfDriving/SelfDrivingDebugVisualizer';
 import { globalSettings, GRAPHICS_MODES } from './globalSettings';
-import { typedWindow } from './helpers/typedWindow';
 
 const maxSteeringAngle = 0.4;
 const startingDirection = new Vector3(0, 0, -1);
@@ -177,6 +176,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
   // Deliberately ignore TypeScript warnings about adding custom properties to window
   // This is for debugging, not prod.
   if (globalSettings.showCarDebugNumbers) {
+    const typedWindow = window as typeof window & Record<string, unknown>;
     typedWindow.carPosition = position;
     typedWindow.carDirection = horizontalDirection;
     typedWindow.carVelocity = velocity.current;

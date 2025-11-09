@@ -3,7 +3,6 @@ import { useControls } from 'leva';
 import { useCallback, useEffect, useRef } from 'react';
 import { MathUtils, Vector3 } from 'three';
 import { getVectorFromStartToTarget } from '../helpers/vectorHelpers';
-import { typedWindow } from '../helpers/typedWindow';
 
 const speedLimit = 10;
 
@@ -63,13 +62,15 @@ export function useSelfDriving({
       customLength: speed,
     });
     desiredVelocity.current.copy(vectorToTarget);
-  }, [position]);
+  }, [position, speed]);
 
   useEffect(() => {
     updateDesiredVelocity();
   }, [updateDesiredVelocity]);
 
   const seek = useCallback(({ delta } : { delta: number }) => {
+    const typedWindow = window as typeof window & Record<string, unknown>;
+
     const angleToTarget = velocity.angleTo(desiredVelocity.current);
     typedWindow.angleToTarget = angleToTarget;
 
@@ -106,8 +107,8 @@ export function useSelfDriving({
 
     updateSteering(updatedSteeringValue);
   }, [
-    position.x,
-    position.z,
+    position,
+    velocity,
     maxSteeringAngle,
     steeringValue,
     updateSteering,
