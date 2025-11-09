@@ -12,8 +12,7 @@ import { SelfDrivingDebugVisualizer } from './selfDriving/SelfDrivingDebugVisual
 import { globalSettings, GRAPHICS_MODES } from './globalSettings';
 import { typedWindow } from './helpers/typedWindow';
 
-const carRenderPosition = new Vector3(0, 0, 0);
-const maxSteeringAngle = 0.35;
+const maxSteeringAngle = 0.4;
 const startingDirection = new Vector3(0, 0, -1);
 const startingVelocity = new Vector3(0, 0, 0);
 
@@ -83,7 +82,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
 
   const {
     isSelfDriving,
-    selfDrivingTargets,
+    checkpoints,
     desiredVelocity,
   } = useSelfDriving({
     setAcceleration,
@@ -195,7 +194,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
           carDirection={horizontalDirection}
           carVelocity={velocity.current}
           desiredVelocity={desiredVelocity}
-          selfDrivingTargets={selfDrivingTargets}
+          checkpoints={checkpoints}
         />
       )}
 

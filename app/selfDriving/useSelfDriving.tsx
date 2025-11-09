@@ -5,10 +5,18 @@ import { MathUtils, Vector3 } from 'three';
 import { getVectorFromStartToTarget } from '../helpers/vectorHelpers';
 import { typedWindow } from '../helpers/typedWindow';
 
-const speedLimit = 5;
+const speedLimit = 10;
 
-const selfDrivingTargets = [
-  new Vector3(147, 0, -122),
+const checkpoints = [
+  new Vector3(156, 0, -80),
+  new Vector3(160, 0, -89),
+  new Vector3(170, 0, -91),
+  new Vector3(180, 0, -91),
+  new Vector3(240, 0, -91),
+  new Vector3(230, 0, -102),
+  new Vector3(200, 0, -102),
+  new Vector3(160, 0, -102),
+  new Vector3(144, 0, -82),
 ];
 
 export function useSelfDriving({
@@ -35,8 +43,7 @@ export function useSelfDriving({
       value: false,
     },
   });
-
-  const target = useRef(selfDrivingTargets[0].clone());
+  const targetIndex = useRef(0);
 
   const speed = velocity?.length() ?? 0;
 
@@ -52,7 +59,7 @@ export function useSelfDriving({
   const updateDesiredVelocity = useCallback(() => {
     const vectorToTarget = getVectorFromStartToTarget({
       start: position,
-      target: target.current,
+      target: checkpoints[targetIndex.current],
       customLength: speed,
     });
     desiredVelocity.current.copy(vectorToTarget);
@@ -74,9 +81,14 @@ export function useSelfDriving({
     const streeringDirection = -Math.sign(crossProduct.y);
 
     const turnAngle = streeringDirection * maxSteeringAngle;
-    
-    const distanceToTarget = position.distanceTo(target.current);
+
+    const distanceToTarget = position.distanceTo(
+      checkpoints[targetIndex.current]
+    );
     typedWindow.distanceToTarget = distanceToTarget;
+    if (distanceToTarget < 2) {
+      targetIndex.current = (targetIndex.current + 1) % checkpoints.length;
+    }
 
     /**
      * The closer we are to the target, the more tolerant the angle gets.
@@ -115,7 +127,7 @@ export function useSelfDriving({
 
   return {
     isSelfDriving,
-    selfDrivingTargets,
+    checkpoints,
     desiredVelocity: desiredVelocity.current,
   };
 }

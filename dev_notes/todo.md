@@ -1,6 +1,9 @@
 # TODO
 
-- Steer towards target (position or direction?)
-- Show targets in debug mode
-- Create test path
-- Make car move towards test path and self-correct if needed
+- Avoid infinite orbits. Possible options:
+  - Steer towards path normal
+  - Check next checkpoint
+  - Use more checkpoints
+- Consider variable speed for straightaways
+- Make auto path generation
+- Consider obstacle avoidance

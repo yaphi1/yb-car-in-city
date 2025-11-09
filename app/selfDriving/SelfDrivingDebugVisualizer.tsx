@@ -7,13 +7,13 @@ export function SelfDrivingDebugVisualizer({
   carDirection,
   carVelocity,
   desiredVelocity,
-  selfDrivingTargets,
+  checkpoints,
 } : {
   carPosition: Vector3;
   carDirection: Vector3;
   carVelocity: Vector3;
   desiredVelocity: Vector3;
-  selfDrivingTargets?: Array<Vector3>;
+  checkpoints?: Array<Vector3>;
 }) {
   return (
     <>
@@ -46,7 +46,7 @@ export function SelfDrivingDebugVisualizer({
         color="lightgreen"
       />
 
-      {selfDrivingTargets?.map((selfDrivingTarget, index) => {
+      {checkpoints?.map((selfDrivingTarget, index) => {
         return (
           <mesh key={index} position={selfDrivingTarget}>
             <sphereGeometry args={[2, 8, 8]} />
