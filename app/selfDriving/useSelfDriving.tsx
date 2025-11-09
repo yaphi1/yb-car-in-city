@@ -18,6 +18,15 @@ const checkpoints = [
   new Vector3(144, 0, -82),
 ];
 
+const pathsToNextCheckpoints = checkpoints.map((checkpoint, i) => {
+  const nextCheckpoint = checkpoints[(i + 1) % checkpoints.length];
+  const pathToNextCheckpoint = getVectorFromStartToTarget({
+    start: checkpoint,
+    target: nextCheckpoint,
+  });
+  return pathToNextCheckpoint;
+});
+
 export function useSelfDriving({
   setAcceleration,
   setBrake,
@@ -56,9 +65,10 @@ export function useSelfDriving({
   }, [speed, setAcceleration, setBrake]);
 
   const updateDesiredVelocity = useCallback(() => {
+    const targetCheckpoint = checkpoints[targetIndex.current];
     const vectorToTarget = getVectorFromStartToTarget({
-      start: position,
-      target: checkpoints[targetIndex.current],
+      start: new Vector3(position.x, 0, position.z),
+      target: new Vector3(targetCheckpoint.x, 0, targetCheckpoint.z),
       customLength: speed,
     });
     desiredVelocity.current.copy(vectorToTarget);
@@ -129,6 +139,7 @@ export function useSelfDriving({
   return {
     isSelfDriving,
     checkpoints,
+    pathsToNextCheckpoints,
     desiredVelocity: desiredVelocity.current,
   };
 }

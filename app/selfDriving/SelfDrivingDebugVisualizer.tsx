@@ -2,19 +2,25 @@ import { Vector3 } from 'three';
 import { setQuaternionFromDirection } from '../helpers/vectorHelpers';
 import { Arrow } from './Arrow';
 
+const carVectorPosition = new Vector3();
+
 export function SelfDrivingDebugVisualizer({
   carPosition,
   carDirection,
   carVelocity,
   desiredVelocity,
   checkpoints,
+  pathsToNextCheckpoints,
 } : {
   carPosition: Vector3;
   carDirection: Vector3;
   carVelocity: Vector3;
   desiredVelocity: Vector3;
-  checkpoints?: Array<Vector3>;
+  checkpoints: Array<Vector3>;
+  pathsToNextCheckpoints: Array<Vector3>;
 }) {
+  carVectorPosition.set(carPosition.x, 3, carPosition.z);
+
   return (
     <>
       <mesh
@@ -29,29 +35,43 @@ export function SelfDrivingDebugVisualizer({
 
       <Arrow
         direction={carDirection}
-        position={carPosition}
-        length={3}
+        position={carVectorPosition}
+        length={4}
         color="#0098db"
       />
       <Arrow
         direction={carVelocity}
-        position={carPosition}
+        position={carVectorPosition}
         length={carVelocity.length()}
         color="red"
       />
       <Arrow
         direction={desiredVelocity}
-        position={carPosition}
+        position={carVectorPosition}
         length={desiredVelocity.length()}
         color="lightgreen"
       />
 
-      {checkpoints?.map((selfDrivingTarget, index) => {
+      {checkpoints.map((checkpoint, index) => {
+        const pathToNextCheckpoint = pathsToNextCheckpoints[index];
         return (
-          <mesh key={index} position={selfDrivingTarget}>
+          <mesh key={`checkpoint_${index}`} position={checkpoint}>
             <sphereGeometry args={[2, 8, 8]} />
-            <meshStandardMaterial name="self_driving_targets" color="#0098db" />
+            <meshStandardMaterial name="checkpoint" color="#0098db" />
           </mesh>
+        );
+      })}
+
+      {pathsToNextCheckpoints.map((pathToNextCheckpoint, index) => {
+        const checkpoint = checkpoints[index];
+        return (
+          <Arrow
+            key={`pathToNextCheckpoint_${index}`}
+            direction={pathToNextCheckpoint}
+            position={new Vector3(checkpoint.x, 1, checkpoint.z)}
+            length={pathToNextCheckpoint.length()}
+            color="gold"
+          />
         );
       })}
     </>

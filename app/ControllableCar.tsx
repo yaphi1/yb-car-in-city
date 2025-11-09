@@ -82,6 +82,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
   const {
     isSelfDriving,
     checkpoints,
+    pathsToNextCheckpoints,
     desiredVelocity,
   } = useSelfDriving({
     setAcceleration,
@@ -195,6 +196,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
           carVelocity={velocity.current}
           desiredVelocity={desiredVelocity}
           checkpoints={checkpoints}
+          pathsToNextCheckpoints={pathsToNextCheckpoints}
         />
       )}
 

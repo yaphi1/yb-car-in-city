@@ -8,11 +8,11 @@ export function Arrow({ direction, position, length, color }: {
   color: string;
 }) {
   const arrow = useMemo(() => {
-    const arrowPosition = new Vector3(position.x, 20, position.z);
+    const arrowPosition = position;
     const headLength = 0.2 * length;
     const headWidth = 0.4 * headLength;
     return new ArrowHelper(direction, arrowPosition, length, color, headLength, headWidth);
-  }, [position.x, position.z, direction, color, length]);
+  }, [position, direction, color, length]);
 
   return <primitive object={arrow} />;
 }
