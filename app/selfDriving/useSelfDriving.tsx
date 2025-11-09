@@ -27,6 +27,25 @@ const pathsToNextCheckpoints = checkpoints.map((checkpoint, i) => {
   return pathToNextCheckpoint;
 });
 
+function getDesiredVelocity({ position, target, speed } : {
+  position: Vector3;
+  target: Vector3;
+  speed: number;
+}) {
+  const desiredVelocity = getVectorFromStartToTarget({
+    start: new Vector3(position.x, 0, position.z),
+    target: new Vector3(target.x, 0, target.z),
+    customLength: speed,
+  });
+  return desiredVelocity;
+}
+
+/**
+ * This function helps us escape situations where the car
+ * approaches a checkpoint from an awkward angle, can't
+ * get close enough to clear the checkpoint and therefore
+ * starts to infinitely orbit the checkpoint.
+ */
 function detectOrbit({ position, velocity, desiredVelocity, target } : {
   position: Vector3;
   velocity: Vector3;
@@ -38,7 +57,7 @@ function detectOrbit({ position, velocity, desiredVelocity, target } : {
   const magnitudeOfDesiredVelocity = desiredVelocity.length();
 
   const isCloseEnoughToTarget = distanceToTarget <= magnitudeOfDesiredVelocity;
-  const hasOrbitAngle = Math.PI - 0.1 < angleToTarget && angleToTarget < Math.PI + 0.1;
+  const hasOrbitAngle = Math.PI/2 - 0.1 < angleToTarget && angleToTarget < Math.PI/2 + 0.1;
 
   const isOrbiting = isCloseEnoughToTarget && hasOrbitAngle;
 
@@ -69,7 +88,7 @@ export function useSelfDriving({
       value: false,
     },
   });
-  const targetIndex = useRef(0);
+  const targetCheckpointIndex = useRef(0);
   const isOrbiting = useRef(false);
 
   const speed = velocity?.length() ?? 0;
@@ -83,22 +102,11 @@ export function useSelfDriving({
     }
   }, [speed, setAcceleration, setBrake]);
 
-  const updateDesiredVelocity = useCallback(() => {
-    const targetCheckpoint = checkpoints[targetIndex.current];
-    const vectorToTarget = getVectorFromStartToTarget({
-      start: new Vector3(position.x, 0, position.z),
-      target: new Vector3(targetCheckpoint.x, 0, targetCheckpoint.z),
-      customLength: speed,
-    });
-    desiredVelocity.current.copy(vectorToTarget);
-  }, [position, speed]);
-
-  useEffect(() => {
-    updateDesiredVelocity();
-  }, [updateDesiredVelocity]);
-
   const seek = useCallback(({ delta } : { delta: number }) => {
     const typedWindow = window as typeof window & Record<string, unknown>;
+    const target = checkpoints[targetCheckpointIndex.current];
+
+    desiredVelocity.current = getDesiredVelocity({ position, target, speed });
 
     const angleToTarget = velocity.angleTo(desiredVelocity.current);
     typedWindow.angleToTarget = angleToTarget;
@@ -113,11 +121,20 @@ export function useSelfDriving({
     const turnAngle = streeringDirection * maxSteeringAngle;
 
     const distanceToTarget = position.distanceTo(
-      checkpoints[targetIndex.current]
+      checkpoints[targetCheckpointIndex.current]
     );
     typedWindow.distanceToTarget = distanceToTarget;
-    if (distanceToTarget < 2) {
-      targetIndex.current = (targetIndex.current + 1) % checkpoints.length;
+
+    isOrbiting.current = detectOrbit({
+      position,
+      velocity,
+      desiredVelocity: desiredVelocity.current,
+      target,
+    });
+
+    const shouldMoveToNextCheckpoint = distanceToTarget < 2 || isOrbiting.current;
+    if (shouldMoveToNextCheckpoint) {
+      targetCheckpointIndex.current = (targetCheckpointIndex.current + 1) % checkpoints.length;
     }
 
     /**
