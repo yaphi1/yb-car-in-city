@@ -50,7 +50,7 @@ export function SelfDrivingDebugVisualizer({
         return (
           <mesh key={index} position={selfDrivingTarget}>
             <sphereGeometry args={[2, 8, 8]} />
-            <meshStandardMaterial name="self_driving_targets" />
+            <meshStandardMaterial name="self_driving_targets" color="#0098db" />
           </mesh>
         );
       })}

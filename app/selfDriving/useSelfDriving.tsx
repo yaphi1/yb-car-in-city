@@ -36,6 +36,8 @@ export function useSelfDriving({
     },
   });
 
+  const target = useRef(selfDrivingTargets[0].clone());
+
   const speed = velocity?.length() ?? 0;
 
   const autoAccelerate = useCallback(() => {
@@ -48,11 +50,9 @@ export function useSelfDriving({
   }, [speed, setAcceleration, setBrake]);
 
   const updateDesiredVelocity = useCallback(() => {
-    const target = selfDrivingTargets[0].clone();
-
     const vectorToTarget = getVectorFromStartToTarget({
       start: position,
-      target,
+      target: target.current,
       customLength: speed,
     });
     desiredVelocity.current.copy(vectorToTarget);
@@ -74,8 +74,21 @@ export function useSelfDriving({
     const streeringDirection = -Math.sign(crossProduct.y);
 
     const turnAngle = streeringDirection * maxSteeringAngle;
+    
+    const distanceToTarget = position.distanceTo(target.current);
+    typedWindow.distanceToTarget = distanceToTarget;
 
-    const targetSteeringValue = angleToTarget > 0.05 ? turnAngle : 0;
+    /**
+     * The closer we are to the target, the more tolerant the angle gets.
+     * Otherwise the wheels will jitter. The 1.5 factor was just based on
+     * what looked good in practical tests.
+     */
+    const angleTolerance = MathUtils.clamp(1.5 / distanceToTarget, 0.01, 0.4);
+    typedWindow.angleTolerance = angleTolerance;
+
+    const shouldTurn = angleToTarget > angleTolerance;
+
+    const targetSteeringValue = shouldTurn ? turnAngle : 0;
     const lerpFactor = 6 * delta;
     const updatedSteeringValue = MathUtils.lerp(steeringValue, targetSteeringValue, lerpFactor);
 
