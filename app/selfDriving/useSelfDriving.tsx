@@ -3,6 +3,7 @@ import { useControls } from 'leva';
 import { useCallback, useEffect, useRef } from 'react';
 import { MathUtils, Vector3 } from 'three';
 import { getVectorFromStartToTarget } from '../helpers/vectorHelpers';
+import { typedWindow } from '../helpers/typedWindow';
 
 const speedLimit = 5;
 
@@ -61,15 +62,13 @@ export function useSelfDriving({
     updateDesiredVelocity();
   }, [updateDesiredVelocity]);
 
-  const autoTurn = useCallback(({ delta } : { delta: number }) => {
-    const isAtBoundary = position.z < -120 ||
-      position.z > -60 ||
-      position.x > 170 ||
-      position.x < 135
-    ;
-    const selfDrivingTargetSteeringValue = isAtBoundary ? maxSteeringAngle : 0;
+  const seek = useCallback(({ delta } : { delta: number }) => {
+    const angleToTarget = velocity.angleTo(desiredVelocity.current);
+    typedWindow.angleToTarget = angleToTarget;
+
+    const targetSteeringValue = angleToTarget > 0.1 ? maxSteeringAngle : 0;
     const lerpFactor = 6 * delta;
-    const updatedSteeringValue = MathUtils.lerp(steeringValue, selfDrivingTargetSteeringValue, lerpFactor);
+    const updatedSteeringValue = MathUtils.lerp(steeringValue, targetSteeringValue, lerpFactor);
 
     updateSteering(updatedSteeringValue);
   }, [
@@ -82,7 +81,7 @@ export function useSelfDriving({
 
   useFrame((_, delta) => {
     if (isSelfDriving) {
-      autoTurn({ delta });
+      seek({ delta });
     }
   });
 
@@ -90,7 +89,7 @@ export function useSelfDriving({
     if (isSelfDriving) {
       autoAccelerate();
     }
-  }, [isSelfDriving, autoAccelerate, autoTurn]);
+  }, [isSelfDriving, autoAccelerate, seek]);
 
   return {
     isSelfDriving,

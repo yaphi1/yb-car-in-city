@@ -8,7 +8,7 @@ export function getVectorFromStartToTarget({ start, target, customLength } : {
   target: Vector3;
   customLength?: number;
 }) {
-  const vectorToTarget = target.sub(start)
+  const vectorToTarget = new Vector3().subVectors(target, start);
   if (customLength) {
     vectorToTarget.setLength(customLength);
   }
