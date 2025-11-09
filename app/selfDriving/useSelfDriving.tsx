@@ -43,7 +43,7 @@ function getDesiredVelocity({ position, target, speed } : {
 /**
  * This function helps us escape situations where the car
  * approaches a checkpoint from an awkward angle, can't
- * get close enough to clear the checkpoint and therefore
+ * get close enough to clear the checkpoint, and therefore
  * starts to infinitely orbit the checkpoint.
  */
 function detectOrbit({ position, velocity, desiredVelocity, target } : {
@@ -55,9 +55,12 @@ function detectOrbit({ position, velocity, desiredVelocity, target } : {
   const angleToTarget = velocity.angleTo(desiredVelocity);
   const distanceToTarget = position.distanceTo(target);
   const magnitudeOfDesiredVelocity = desiredVelocity.length();
+  const orbitAngleTolerance = 0.2;
+  const minOrbitAngle = Math.PI/2 - orbitAngleTolerance;
+  const maxOrbitAngle = Math.PI/2 + orbitAngleTolerance;
 
   const isCloseEnoughToTarget = distanceToTarget <= magnitudeOfDesiredVelocity;
-  const hasOrbitAngle = Math.PI/2 - 0.1 < angleToTarget && angleToTarget < Math.PI/2 + 0.1;
+  const hasOrbitAngle = minOrbitAngle < angleToTarget && angleToTarget < maxOrbitAngle;
 
   const isOrbiting = isCloseEnoughToTarget && hasOrbitAngle;
 
