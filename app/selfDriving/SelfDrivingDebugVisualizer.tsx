@@ -6,11 +6,13 @@ export function SelfDrivingDebugVisualizer({
   carPosition,
   carDirection,
   carVelocity,
+  desiredVelocity,
   selfDrivingTargets,
 } : {
   carPosition: Vector3;
   carDirection: Vector3;
   carVelocity: Vector3;
+  desiredVelocity: Vector3;
   selfDrivingTargets?: Array<Vector3>;
 }) {
   return (
@@ -36,6 +38,12 @@ export function SelfDrivingDebugVisualizer({
         position={carPosition}
         length={carVelocity.length()}
         color="red"
+      />
+      <Arrow
+        direction={desiredVelocity}
+        position={carPosition}
+        length={desiredVelocity.length()}
+        color="lightgreen"
       />
 
       {selfDrivingTargets?.map((selfDrivingTarget, index) => {

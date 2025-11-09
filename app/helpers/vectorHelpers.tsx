@@ -1,4 +1,20 @@
-import { Quaternion, Vector3 } from "three";
+import { Quaternion, Vector3 } from 'three';
+
+/**
+ * `target` - `start` = vector from start to target
+ */
+export function getVectorFromStartToTarget({ start, target, customLength } : {
+  start: Vector3;
+  target: Vector3;
+  customLength?: number;
+}) {
+  const vectorToTarget = target.sub(start)
+  if (customLength) {
+    vectorToTarget.setLength(customLength);
+  }
+  
+  return vectorToTarget;
+}
 
 /**
  * Create a quaternion that rotates `startingDirection` to `direction`.
@@ -6,7 +22,7 @@ import { Quaternion, Vector3 } from "three";
  * - Handles opposite-direction (180°) edge case.
  * 
  * Note:
- * This file was generated with Copilot and lightly edited.
+ * This function was generated with Copilot and lightly edited.
  * Normally, I'd investigate it in more depth, but since this
  * is peripheral to the main project and it seems to work,
  * I'll leave this as an exercise to come back to later.
@@ -24,8 +40,11 @@ export function setQuaternionFromDirection({
   const dot = start.dot(dir);
 
   // Opposite direction -> 180deg around any orthogonal axis
+  // TODO: investigate suspicious constant
   if (dot < -0.999999) {
     const ortho = new Vector3(1, 0, 0).cross(start);
+
+    // TODO: investigate suspicious constant
     if (ortho.lengthSq() < 1e-6) {
       ortho.set(0, 1, 0).cross(start);
     }

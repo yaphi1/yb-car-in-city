@@ -80,7 +80,11 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
     steeringValue.current = nextSteeringValue;
   }, [vehicleApi]);
 
-  const { isSelfDriving, selfDrivingTargets } = useSelfDriving({
+  const {
+    isSelfDriving,
+    selfDrivingTargets,
+    desiredVelocity,
+  } = useSelfDriving({
     setAcceleration,
     setBrake,
     updateSteering,
@@ -178,6 +182,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
     win.carDirection = horizontalDirection;
     win.carVelocity = velocity.current;
     win.carSpeed = speed.current;
+    win.desiredVelocity = desiredVelocity;
   }
 
   return (
@@ -189,6 +194,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
           carPosition={position}
           carDirection={horizontalDirection}
           carVelocity={velocity.current}
+          desiredVelocity={desiredVelocity}
           selfDrivingTargets={selfDrivingTargets}
         />
       )}

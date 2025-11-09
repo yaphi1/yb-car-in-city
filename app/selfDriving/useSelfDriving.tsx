@@ -1,7 +1,8 @@
 import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { MathUtils, Vector3 } from 'three';
+import { getVectorFromStartToTarget } from '../helpers/vectorHelpers';
 
 const speedLimit = 5;
 
@@ -26,6 +27,7 @@ export function useSelfDriving({
   steeringValue: number;
   maxSteeringAngle: number;
 }) {
+  const desiredVelocity = useRef(new Vector3().copy(velocity));
   const { isSelfDriving } = useControls({
     isSelfDriving: {
       label: 'Self-driving',
@@ -44,11 +46,20 @@ export function useSelfDriving({
     }
   }, [speed, setAcceleration, setBrake]);
 
-  useFrame((_, delta) => {
-    if (isSelfDriving) {
-      autoTurn({ delta });
-    }
-  });
+  const updateDesiredVelocity = useCallback(() => {
+    const target = selfDrivingTargets[0].clone();
+
+    const vectorToTarget = getVectorFromStartToTarget({
+      start: position,
+      target,
+      customLength: speed,
+    });
+    desiredVelocity.current.copy(vectorToTarget);
+  }, [position]);
+
+  useEffect(() => {
+    updateDesiredVelocity();
+  }, [updateDesiredVelocity]);
 
   const autoTurn = useCallback(({ delta } : { delta: number }) => {
     const isAtBoundary = position.z < -120 ||
@@ -69,6 +80,12 @@ export function useSelfDriving({
     updateSteering,
   ]);
 
+  useFrame((_, delta) => {
+    if (isSelfDriving) {
+      autoTurn({ delta });
+    }
+  });
+
   useEffect(() => {
     if (isSelfDriving) {
       autoAccelerate();
@@ -78,5 +95,6 @@ export function useSelfDriving({
   return {
     isSelfDriving,
     selfDrivingTargets,
+    desiredVelocity: desiredVelocity.current,
   };
 }
