@@ -12,8 +12,8 @@ const checkpoints = buildTravelPath({
   laneIndex: 1,
   intersections: [
     { column: 0, row: 1 },
-    { column: 1, row: 1 },
-    { column: 1, row: 0 },
+    { column: -1, row: 1 },
+    { column: -1, row: 0 },
     { column: 0, row: 0 },
   ],
 });
@@ -31,6 +31,28 @@ function getDesiredVelocity({ position, target, speed } : {
     customLength: speed,
   });
   return desiredVelocity;
+}
+
+function getTurnAngle({ velocity, desiredVelocity, maxSteeringAngle } : {
+  velocity: Vector3;
+  desiredVelocity: Vector3;
+  maxSteeringAngle: number;
+}) {
+  /**
+   * The cross product gives a perpendicular vector
+   * from a counterclockwise sweep from vectors `a` to `b`.
+   * 
+   * If it points up (positive), we're going counterclockwise.
+   * If down (negative), we're going clockwise.
+   */
+  const perpendicularVector = new Vector3().crossVectors(
+    desiredVelocity,
+    velocity
+  );
+  const streeringDirection = -Math.sign(perpendicularVector.y);
+
+  const turnAngle = streeringDirection * maxSteeringAngle;
+  return turnAngle;
 }
 
 /**
@@ -108,14 +130,11 @@ export function useSelfDriving({
     const angleToTarget = velocity.angleTo(desiredVelocity.current);
     typedWindow.angleToTarget = angleToTarget;
 
-    /** perpendicular up vector from a counterclockwise sweep from vector a to b */
-    const crossProduct = new Vector3().crossVectors(
-      desiredVelocity.current,
-      velocity
-    );
-    const streeringDirection = -Math.sign(crossProduct.y);
-
-    const turnAngle = streeringDirection * maxSteeringAngle;
+    const turnAngle = getTurnAngle({
+      velocity,
+      desiredVelocity: desiredVelocity.current,
+      maxSteeringAngle,
+    });
 
     const distanceToTarget = position.distanceTo(
       checkpoints[targetCheckpointIndex.current]
@@ -136,7 +155,6 @@ export function useSelfDriving({
     }
 
     const angleTolerance = 0.01;
-    typedWindow.angleTolerance = angleTolerance;
 
     const shouldTurn = angleToTarget > angleTolerance;
 
