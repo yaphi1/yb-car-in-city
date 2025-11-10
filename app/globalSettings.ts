@@ -21,7 +21,7 @@ type GlobalSettings = {
 };
 
 export const globalSettings: GlobalSettings = {
-  graphicsMode: GRAPHICS_MODES.FULL_3D,
-  cameraMode: CAMERA_MODES.FIXED_FOLLOW,
+  graphicsMode: GRAPHICS_MODES.MATH_MODE,
+  cameraMode: CAMERA_MODES.TOP_DOWN,
   showCarDebugNumbers: true,
 };

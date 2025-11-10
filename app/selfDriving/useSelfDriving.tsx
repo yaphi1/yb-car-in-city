@@ -5,7 +5,8 @@ import { MathUtils, Vector3 } from 'three';
 import { getVectorFromStartToTarget } from '../helpers/vectorHelpers';
 import { buildTravelPath, getPathsToNextCheckpoints, makeRoadCheckpoints } from './navigation';
 
-const speedLimit = 10;
+const SPEED_LIMIT = 10;
+const CHECKPOINT_HIT_DISTANCE = 2;
 
 const checkpoints = buildTravelPath({
   laneIndex: 1,
@@ -50,8 +51,9 @@ function detectOrbit({ position, velocity, desiredVelocity, target } : {
   const orbitAngleTolerance = 0.2;
   const minOrbitAngle = Math.PI/2 - orbitAngleTolerance;
   const maxOrbitAngle = Math.PI/2 + orbitAngleTolerance;
+  const maxOrbitDiameter = 2 * magnitudeOfDesiredVelocity - CHECKPOINT_HIT_DISTANCE;
 
-  const isCloseEnoughToTarget = distanceToTarget <= magnitudeOfDesiredVelocity;
+  const isCloseEnoughToTarget = distanceToTarget <= maxOrbitDiameter;
   const hasOrbitAngle = minOrbitAngle < angleToTarget && angleToTarget < maxOrbitAngle;
 
   const isOrbiting = isCloseEnoughToTarget && hasOrbitAngle;
@@ -90,7 +92,7 @@ export function useSelfDriving({
 
   const autoAccelerate = useCallback(() => {
     setBrake({ force: 0 });
-    if (speed < speedLimit) {
+    if (speed < SPEED_LIMIT) {
       setAcceleration({ force: 500 });
     } else {
       setAcceleration({ force: 0 });
@@ -127,7 +129,8 @@ export function useSelfDriving({
       target,
     });
 
-    const shouldMoveToNextCheckpoint = distanceToTarget < 2 || isOrbiting.current;
+    const hasHitCheckpoint = distanceToTarget < CHECKPOINT_HIT_DISTANCE;
+    const shouldMoveToNextCheckpoint = hasHitCheckpoint || isOrbiting.current;
     if (shouldMoveToNextCheckpoint) {
       targetCheckpointIndex.current = (targetCheckpointIndex.current + 1) % checkpoints.length;
     }
