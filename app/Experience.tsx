@@ -11,7 +11,7 @@ import { Fog } from './Fog';
 import { WireframeToggle } from './WireframeToggle';
 import { CityTileModel } from './CityTileModel';
 
-const startingPosition = new Vector3(156, 1, -70);
+const startingPosition = new Vector3(156, 1, -80);
 const startPositionToTestOrbit = new Vector3(148, 1, -80);
 
 export function Experience() {

@@ -166,7 +166,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
       // "just rotate your initial forward direction around the current rotation axis"
       // https://www.gamedev.net/forums/topic/56471-extracting-direction-vectors-from-quaternion/
       setHorizontalDirection(() => {
-        const updatedDirection = new Vector3().copy(startingDirection);
+        const updatedDirection = startingDirection.clone();
         updatedDirection.applyQuaternion(new Quaternion(...quaternion));
         updatedDirection.y = 0;
         return updatedDirection;

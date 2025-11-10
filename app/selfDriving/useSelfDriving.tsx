@@ -3,29 +3,25 @@ import { useControls } from 'leva';
 import { useCallback, useEffect, useRef } from 'react';
 import { MathUtils, Vector3 } from 'three';
 import { getVectorFromStartToTarget } from '../helpers/vectorHelpers';
+import { getPathsToNextCheckpoints, makeRoadCheckpoints } from './navigation';
 
 const speedLimit = 10;
 
-const checkpoints = [
-  new Vector3(156, 0, -80),
-  new Vector3(160, 0, -89),
-  new Vector3(170, 0, -91),
-  new Vector3(180, 0, -91),
-  new Vector3(240, 0, -91),
-  new Vector3(230, 0, -102),
-  new Vector3(200, 0, -102),
-  new Vector3(160, 0, -102),
-  new Vector3(144, 0, -82),
-];
+// vertical
+// const checkpoints = makeRoadCheckpoints({
+//   startingIntersection: { column: 0, row: 1 },
+//   endingIntersection: { column: 0, row: 2 },
+//   laneIndex: 1,
+// });
 
-const pathsToNextCheckpoints = checkpoints.map((checkpoint, i) => {
-  const nextCheckpoint = checkpoints[(i + 1) % checkpoints.length];
-  const pathToNextCheckpoint = getVectorFromStartToTarget({
-    start: checkpoint,
-    target: nextCheckpoint,
-  });
-  return pathToNextCheckpoint;
+// horizontal
+const checkpoints = makeRoadCheckpoints({
+  startingIntersection: { column: 0, row: 1 },
+  endingIntersection: { column: 1, row: 1 },
+  laneIndex: 1,
 });
+
+const pathsToNextCheckpoints = getPathsToNextCheckpoints({ checkpoints });
 
 function getDesiredVelocity({ position, target, speed } : {
   position: Vector3;
@@ -84,7 +80,7 @@ export function useSelfDriving({
   steeringValue: number;
   maxSteeringAngle: number;
 }) {
-  const desiredVelocity = useRef(new Vector3().copy(velocity));
+  const desiredVelocity = useRef(velocity.clone());
   const { isSelfDriving } = useControls({
     isSelfDriving: {
       label: 'Self-driving',
@@ -145,7 +141,7 @@ export function useSelfDriving({
      * Otherwise the wheels will jitter. The 1.5 factor was just based on
      * what looked good in practical tests.
      */
-    const angleTolerance = MathUtils.clamp(1.5 / distanceToTarget, 0.01, 0.4);
+    const angleTolerance = MathUtils.clamp(1.5 / distanceToTarget, 0.01, 0.2);
     typedWindow.angleTolerance = angleTolerance;
 
     const shouldTurn = angleToTarget > angleTolerance;
@@ -158,6 +154,7 @@ export function useSelfDriving({
   }, [
     position,
     velocity,
+    speed,
     maxSteeringAngle,
     steeringValue,
     updateSteering,

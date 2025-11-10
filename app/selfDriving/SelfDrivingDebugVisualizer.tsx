@@ -62,7 +62,7 @@ export function SelfDrivingDebugVisualizer({
         );
       })}
 
-      {pathsToNextCheckpoints.map((pathToNextCheckpoint, index) => {
+      {/* {pathsToNextCheckpoints.map((pathToNextCheckpoint, index) => {
         const checkpoint = checkpoints[index];
         return (
           <Arrow
@@ -73,7 +73,7 @@ export function SelfDrivingDebugVisualizer({
             color="gold"
           />
         );
-      })}
+      })} */}
     </>
   );
 }

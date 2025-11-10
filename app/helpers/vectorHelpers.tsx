@@ -1,6 +1,19 @@
 import { Quaternion, Vector3 } from 'three';
 
 /**
+ * Note: `progressAmounts` should each be from 0 to 1.
+ */
+export function getPointsAlongVectors({ vector, startPosition, progressAmounts } : {
+  vector: Vector3;
+  startPosition: Vector3;
+  progressAmounts: Array<number>;
+}) {
+  return progressAmounts.map(progress => (
+    startPosition.clone().add(vector.clone().multiplyScalar(progress))
+  ));
+}
+
+/**
  * `target` - `start` = vector from start to target
  */
 export function getVectorFromStartToTarget({ start, target, customLength } : {
