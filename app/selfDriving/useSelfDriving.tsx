@@ -132,18 +132,13 @@ export function useSelfDriving({
       targetCheckpointIndex.current = (targetCheckpointIndex.current + 1) % checkpoints.length;
     }
 
-    /**
-     * The closer we are to the target, the more tolerant the angle gets.
-     * Otherwise the wheels will jitter. The 1.5 factor was just based on
-     * what looked good in practical tests.
-     */
-    const angleTolerance = MathUtils.clamp(1.5 / distanceToTarget, 0.01, 0.2);
+    const angleTolerance = 0.01;
     typedWindow.angleTolerance = angleTolerance;
 
     const shouldTurn = angleToTarget > angleTolerance;
 
     const targetSteeringValue = shouldTurn ? turnAngle : 0;
-    const lerpFactor = 6 * delta;
+    const lerpFactor = 3 * delta;
     const updatedSteeringValue = MathUtils.lerp(steeringValue, targetSteeringValue, lerpFactor);
 
     updateSteering(updatedSteeringValue);
