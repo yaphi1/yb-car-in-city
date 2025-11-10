@@ -64,6 +64,10 @@ function getLaneOffsetFromCenter({ startingIntersectionPosition, endingIntersect
   return laneOffset;
 }
 
+/**
+ * This generates self-driving checkpoints along
+ * a single stretch of road between intersections
+ */
 export function makeRoadCheckpoints({
   startingIntersection,
   endingIntersection,
@@ -103,25 +107,23 @@ export function makeRoadCheckpoints({
   return checkpoints;
 }
 
-/*
-inner lane: center +- 1.925
-outer lane: center +- 5.25
-lane entrance: center +- 16
-*/
+/**
+ * Takes in a sequence of intersections and returns
+ * a sequence of self-driving checkpoints.
+ */
+export function buildTravelPath({ laneIndex, intersections } : {
+  laneIndex: number;
+  intersections: Array<Intersection>;
+}) {
+  const checkpoints = intersections.flatMap((intersection, i) => {
+    const nextIntersection = intersections[(i + 1) % intersections.length];
+    const roadCheckpoints = makeRoadCheckpoints({
+      startingIntersection: intersection,
+      endingIntersection: nextIntersection,
+      laneIndex,
+    });
+    return roadCheckpoints;
+  });
 
-/*
-draw path
-- starting intersection
-- end intersection
-- lane (pick direction based on cross product of vector from start to end and up vector)
-- place checkpoints
-  - intersection peek
-  - road entrance
-  - entrance stabilizer
-  - quarter point
-  - midpoint
-  - three quarters
-  - exit stabilizer
-  - exit
-  - intersection exit peek
-*/
+  return checkpoints;
+}

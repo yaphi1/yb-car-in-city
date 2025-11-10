@@ -3,22 +3,18 @@ import { useControls } from 'leva';
 import { useCallback, useEffect, useRef } from 'react';
 import { MathUtils, Vector3 } from 'three';
 import { getVectorFromStartToTarget } from '../helpers/vectorHelpers';
-import { getPathsToNextCheckpoints, makeRoadCheckpoints } from './navigation';
+import { buildTravelPath, getPathsToNextCheckpoints, makeRoadCheckpoints } from './navigation';
 
 const speedLimit = 10;
 
-// vertical
-// const checkpoints = makeRoadCheckpoints({
-//   startingIntersection: { column: 0, row: 1 },
-//   endingIntersection: { column: 0, row: 2 },
-//   laneIndex: 1,
-// });
-
-// horizontal
-const checkpoints = makeRoadCheckpoints({
-  startingIntersection: { column: 0, row: 1 },
-  endingIntersection: { column: 1, row: 1 },
+const checkpoints = buildTravelPath({
   laneIndex: 1,
+  intersections: [
+    { column: 0, row: 1 },
+    { column: 1, row: 1 },
+    { column: 1, row: 0 },
+    { column: 0, row: 0 },
+  ],
 });
 
 const pathsToNextCheckpoints = getPathsToNextCheckpoints({ checkpoints });
