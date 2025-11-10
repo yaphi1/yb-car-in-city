@@ -53,7 +53,6 @@ export function SelfDrivingDebugVisualizer({
       />
 
       {checkpoints.map((checkpoint, index) => {
-        const pathToNextCheckpoint = pathsToNextCheckpoints[index];
         return (
           <mesh key={`checkpoint_${index}`} position={checkpoint}>
             <sphereGeometry args={[2, 8, 8]} />

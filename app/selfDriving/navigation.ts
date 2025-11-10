@@ -90,18 +90,52 @@ export function makeRoadCheckpoints({
   const laneEnd = (new Vector3()).addVectors(endingIntersectionPosition, laneOffset);
   const laneVector = getVectorFromStartToTarget({ start: laneStart, target: laneEnd });
 
-  const laneCheckpoints = getPointsAlongVectors({
-    vector: laneVector,
-    startPosition: laneStart,
-    progressAmounts: [0.3, 0.4, 0.5, 0.6, 0.7],
+  /** Distance from center of intersection to lane entrance */
+  const entranceDistance = 15;
+
+  /**
+   * The stabilizer is a checkpoint right after the lane entrance
+   * whose goal is to stabilize the steering.
+  */
+  const stabilizerDistance = 22;
+  
+  const laneEntrance = laneStart.clone()
+    .add(laneVector.clone().setLength(entranceDistance))
+  ;
+  const laneEntranceStabilizer = laneStart.clone()
+    .add(laneVector.clone().setLength(stabilizerDistance))
+  ;
+  const laneExitStabilizer = laneStart.clone()
+    .add(laneVector.clone().setLength(laneVector.length() - stabilizerDistance))
+  ;
+  const laneExit = laneStart.clone()
+    .add(laneVector.clone().setLength(laneVector.length() - entranceDistance))
+  ;
+
+  const laneInnerDistance = laneEntranceStabilizer.distanceTo(laneExitStabilizer);
+  const desiredSegmentLength = 16;
+  const numberOfSegments = Math.floor(laneInnerDistance / desiredSegmentLength);
+
+  const laneInnerVector = getVectorFromStartToTarget({
+    start: laneEntranceStabilizer,
+    target: laneExitStabilizer,
+  });
+
+  const evenlyDistributedPointsFrom0To1 = new Array(numberOfSegments).fill(0)
+    .map((_, i) => i / numberOfSegments).slice(1)
+  ;
+  const laneInnerCheckpoints = getPointsAlongVectors({
+    vector: laneInnerVector,
+    startPosition: laneEntranceStabilizer,
+    progressAmounts: evenlyDistributedPointsFrom0To1,
   });
 
   const checkpoints = [
-    laneStart.clone().add(laneVector.clone().setLength(15)),
-    laneStart.clone().add(laneVector.clone().setLength(22)),
-    ...laneCheckpoints,
-    laneStart.clone().add(laneVector.clone().setLength(laneVector.length() - 22)),
-    laneStart.clone().add(laneVector.clone().setLength(laneVector.length() - 15)),
+    laneEntrance,
+    laneEntranceStabilizer,
+    ...laneInnerCheckpoints,
+    laneExitStabilizer,
+    laneExit,
   ];
 
   return checkpoints;
@@ -126,7 +160,10 @@ function getTurnControlPoint({ turnStart, turnEnd, directionOfTurnStart } : {
     target: turnEnd,
   });
 
-  /** `1` is square, `0.5` is flat, `0` is a concave square */
+  /**
+   * `1` is square, `0.5` is flat, `0` is a concave square.
+   * Anything between is a curve.
+   */
   const turnSharpness = 0.7;
 
   const goThisFarInDirectionOfTurnStart = vectorInDirectionOfTurnStart.clone()
