@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
 import { getPointsAlongVectors, getVectorFromStartToTarget } from '../helpers/vectorHelpers';
 
-const upVector = new Vector3(0, 1, 0);
+const UP_VECTOR = new Vector3(0, 1, 0);
 
 export function getPathsToNextCheckpoints({ checkpoints } : {
   checkpoints: Array<Vector3>;
@@ -53,7 +53,7 @@ function getLaneOffsetFromCenter({ startingIntersectionPosition, endingIntersect
     start: startingIntersectionPosition,
     target: endingIntersectionPosition,
   });
-  const laneDirection = (new Vector3()).crossVectors(roadVector, upVector).normalize();
+  const laneDirection = (new Vector3()).crossVectors(roadVector, UP_VECTOR).normalize();
 
   const laneStartingOffset = 1.925;
   const laneWidth = 3.325;
@@ -107,6 +107,58 @@ export function makeRoadCheckpoints({
   return checkpoints;
 }
 
+function getTurnControlPoint({ turnStart, turnEnd, directionOfTurnStart } : {
+  turnStart: Vector3;
+  turnEnd: Vector3;
+  directionOfTurnStart: Vector3;
+}) {
+  const vectorFromStartToEnd = getVectorFromStartToTarget({
+    start: turnStart,
+    target: turnEnd,
+  });
+
+  const vectorInDirectionOfTurnStart = vectorFromStartToEnd.clone().projectOnVector(
+    directionOfTurnStart
+  );
+
+  const vectorInDirectionOfTurnEnd = getVectorFromStartToTarget({
+    start: turnStart.clone().add(vectorInDirectionOfTurnStart),
+    target: turnEnd,
+  });
+
+  /** `1` is square, `0.5` is flat, `0` is a concave square */
+  const turnSharpness = 0.7;
+
+  const goThisFarInDirectionOfTurnStart = vectorInDirectionOfTurnStart.clone()
+    .multiplyScalar(turnSharpness)
+  ;
+  const goThisFarInDirectionOfTurnEnd = vectorInDirectionOfTurnEnd.clone()
+    .multiplyScalar(1 - turnSharpness)
+  ;
+  const controlPoint = turnStart.clone()
+    .add(goThisFarInDirectionOfTurnStart)
+    .add(goThisFarInDirectionOfTurnEnd)
+  ;
+
+  return controlPoint;
+}
+
+/**
+ * This tells you what direction the car is going in
+ * at the end of a set of road checkpoints.
+ */
+function getLatestDirection({ roadCheckpoints } : {
+  roadCheckpoints: Array<Vector3>;
+}) {
+  const lastTwoCheckpoints = roadCheckpoints.slice(-2);
+  const currentDirection = getVectorFromStartToTarget({
+    start: lastTwoCheckpoints[0],
+    target: lastTwoCheckpoints[1],
+  }).normalize();
+
+  return currentDirection;
+}
+
 /**
  * Takes in a sequence of intersections and returns
  * a sequence of self-driving checkpoints.
@@ -117,11 +169,29 @@ export function buildTravelPath({ laneIndex, intersections } : {
 }) {
   const checkpoints = intersections.flatMap((intersection, i) => {
     const nextIntersection = intersections[(i + 1) % intersections.length];
+    const lookAheadIntersection = intersections[(i + 2) % intersections.length];
+
     const roadCheckpoints = makeRoadCheckpoints({
       startingIntersection: intersection,
       endingIntersection: nextIntersection,
       laneIndex,
     });
+
+    const directionOfTurnStart = getLatestDirection({ roadCheckpoints });
+
+    const turnStart = roadCheckpoints[roadCheckpoints.length - 1];
+    const turnEnd = makeRoadCheckpoints({
+      startingIntersection: nextIntersection,
+      endingIntersection: lookAheadIntersection,
+      laneIndex,
+    })[0];
+
+    const turnControlPoint = getTurnControlPoint({
+      turnStart, turnEnd, directionOfTurnStart
+    });
+
+    roadCheckpoints.push(turnControlPoint);
+
     return roadCheckpoints;
   });
 
