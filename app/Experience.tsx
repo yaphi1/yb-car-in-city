@@ -86,13 +86,20 @@ export function Experience() {
                 startingCheckpointIndex={1}
                 topSpeed={10}
               />
-              {/* <ControllableCar
+              <ControllableCar
+                color="#00aa55"
+                journey={journeys.clockwiseBlock}
+                startingLaneIndex={1}
+                startingCheckpointIndex={2}
+                topSpeed={5}
+              />
+              <ControllableCar
                 color="#00aa55"
                 journey={journeys.clockwiseBlock}
                 startingLaneIndex={0}
-                startingCheckpointIndex={2}
+                startingCheckpointIndex={3}
                 topSpeed={5}
-              /> */}
+              />
               <ControllableCar
                 color="#0098db"
                 journey={journeys.counterclockwiseBlock}
@@ -108,7 +115,6 @@ export function Experience() {
                 topSpeed={5}
               />
 
-              <RaycastTest />
             {/* </Debug> */}
 
             <WireframeToggle />

@@ -155,7 +155,7 @@ export function PolestarCar({
 
   return (
     <>
-      <group ref={chassisBodyRef} {...props} dispose={null}>
+      <group ref={chassisBodyRef} name="car" {...props} dispose={null}>
         <group>
           <group
             name="carBody"

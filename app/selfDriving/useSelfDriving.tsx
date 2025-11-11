@@ -1,7 +1,7 @@
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { MathUtils, Vector3 } from 'three';
+import { MathUtils, Object3D, Raycaster, Vector3 } from 'three';
 import { getSignedAngle, getVectorFromStartToTarget } from '../helpers/vectorHelpers';
 import { getPathsToNextCheckpoints } from './navigation';
 import { Journey } from './journeys';
@@ -85,6 +85,7 @@ export function useSelfDriving({
   topSpeed: number;
 }) {
   const [laneIndex, setLaneIndex] = useState(startingLaneIndex);
+  const { scene } = useThree();
 
   const checkpoints = useMemo(() => {
     return journey.lanes[laneIndex];
@@ -93,14 +94,52 @@ export function useSelfDriving({
   const pathsToNextCheckpoints = useMemo(() => {
     return getPathsToNextCheckpoints({ checkpoints });
   }, [checkpoints]);
+  
+  const targetCheckpointIndex = useRef((startingCheckpointIndex + 1) % checkpoints.length);
+  const isOrbiting = useRef(false);
+  const isObstacleDetected = useRef(false);
+  const isChangingLanesAtIndex = useRef<number | null>(null);
+
+  const speed = velocity?.length() ?? 0;
+
+  useEffect(() => {
+    const origin = position;
+    const direction = velocity.normalize();
+    const near = 3;
+    const far = 12;
+
+    const raycaster = new Raycaster(origin, direction, near, far);
+
+    scene.traverse((obj: Object3D) => {
+      if (obj.name === 'car') {
+        const hitObjects = raycaster.intersectObject(obj);
+        if (hitObjects.length) {
+          isObstacleDetected.current = true;
+        }
+      }
+    });
+
+  }, [scene, position]);
 
   const changeLanes = useCallback(() => {
+    isChangingLanesAtIndex.current = targetCheckpointIndex.current;
     setLaneIndex((index) => (index + 1) % journey.lanes.length);
   }, [journey]);
 
   useEffect(() => {
-    setInterval(changeLanes, 8000);
-  }, [changeLanes]);
+    if (isChangingLanesAtIndex.current !== targetCheckpointIndex.current) {
+      isChangingLanesAtIndex.current = null;
+      isObstacleDetected.current = false;
+    }
+  }, [targetCheckpointIndex.current]);
+
+  useEffect(() => {
+    const isNotChangingLanes = isChangingLanesAtIndex.current !== targetCheckpointIndex.current;
+    if (isObstacleDetected.current && isNotChangingLanes) {
+      changeLanes();
+      isObstacleDetected.current = false;
+    }
+  }, [isObstacleDetected.current]);
 
   const desiredVelocity = useRef(velocity.clone());
   const { isSelfDriving } = useControls({
@@ -109,10 +148,6 @@ export function useSelfDriving({
       value: false,
     },
   });
-  const targetCheckpointIndex = useRef((startingCheckpointIndex + 1) % checkpoints.length);
-  const isOrbiting = useRef(false);
-
-  const speed = velocity?.length() ?? 0;
 
   const autoAccelerate = useCallback(() => {
     setBrake({ force: 0 });
