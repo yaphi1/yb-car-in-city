@@ -15,10 +15,14 @@ const maxSteeringAngle = 0.35;
 const startingDirection = new Vector3(0, 0, -1);
 const startingVelocity = new Vector3(0, 0, 0);
 
-export function ControllableCar({ color = 0x5500aa, startingPosition = new Vector3(0, 0, 0) }: 
-{
+export function ControllableCar({
+  color = 0x5500aa,
+  startingPosition = new Vector3(0, 0, 0),
+  isMainCharacter = false,
+} : {
   color?: ColorRepresentation;
   startingPosition?: Vector3;
+  isMainCharacter?: boolean;
 }) {
   const speed = useRef(0);
   const velocity = useRef(startingVelocity);
@@ -126,14 +130,14 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
   }, [leftPressed, rightPressed, updateSteering]);
 
   useFrame((_, delta) => {
-    if (isSelfDriving) { return; }
+    if (isSelfDriving || !isMainCharacter) { return; }
     steerWhenPressed({ delta });
     if (brakePressed) { runAntiLockBrakes(); }
     if (!brakePressed) { tryToCoast(); }
   });
 
   useEffect(() => {
-    if (isSelfDriving) {
+    if (isSelfDriving || !isMainCharacter) {
       return;
     }
     if (forwardPressed && !backwardPressed) {
@@ -147,7 +151,7 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
     if (!forwardPressed && !backwardPressed) {
       setAcceleration({ force: 0 });
     }
-  }, [setAcceleration, setBrake, forwardPressed, backwardPressed, brakePressed, isSelfDriving]);
+  }, [setAcceleration, setBrake, forwardPressed, backwardPressed, brakePressed, isSelfDriving, isMainCharacter]);
 
   useEffect(() => {
     chassisApi.velocity.subscribe((newVelocity) => {
@@ -187,7 +191,9 @@ export function ControllableCar({ color = 0x5500aa, startingPosition = new Vecto
 
   return (
     <>
-      <CarCamera carPosition={position} carDirection={horizontalDirection} />
+      {isMainCharacter && (
+        <CarCamera carPosition={position} carDirection={horizontalDirection} />
+      )}
 
       {globalSettings.graphicsMode === GRAPHICS_MODES.MATH_MODE && (
         <SelfDrivingDebugVisualizer

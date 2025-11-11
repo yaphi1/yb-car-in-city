@@ -74,7 +74,8 @@ export function Experience() {
               <Fog color="#ffe8e8" near={200} far={2000} />
               <Ground />
               {cityTiles}
-              <ControllableCar color={carColor} startingPosition={startingPosition} />
+              <ControllableCar color={carColor} startingPosition={startingPosition} isMainCharacter={true} />
+              <ControllableCar color="#0098db" startingPosition={startPositionToTestOrbit} />
             {/* </Debug> */}
 
             <WireframeToggle />
