@@ -1,7 +1,15 @@
 import { Vector3 } from 'three';
 import { getPointsAlongVectors, getVectorFromStartToTarget } from '../helpers/vectorHelpers';
+import { Journey } from './journeys';
 
 const UP_VECTOR = new Vector3(0, 1, 0);
+
+export type NavIntersection = {
+  column: number;
+  row: number;
+};
+
+export type LaneCheckpoints = Array<Vector3>;
 
 export function getPathsToNextCheckpoints({ checkpoints } : {
   checkpoints: Array<Vector3>;
@@ -18,12 +26,7 @@ export function getPathsToNextCheckpoints({ checkpoints } : {
   return pathsToNextCheckPoints;
 };
 
-type Intersection = {
-  column: number;
-  row: number;
-};
-
-function getIntersectionPosition({ column, row } : Intersection) {
+function getIntersectionPosition({ column, row }: NavIntersection) {
   const centralIntersection = { x: 151, z: 16 };
   const blockWidth = 302;
   const blockLength = 112;
@@ -40,7 +43,7 @@ function getIntersectionPosition({ column, row } : Intersection) {
  * your starting intersection to your ending intersection.
  * 
  * This gives `x` and `z` offsets, so you can freely add these
- * to your center coordinates and get the correct posiiton
+ * to your center coordinates and get the correct position
  * without worrying about the orientation, which is already
  * handled for you here.
  */
@@ -73,8 +76,8 @@ export function makeRoadCheckpoints({
   endingIntersection,
   laneIndex,
 } : {
-  startingIntersection: Intersection;
-  endingIntersection: Intersection;
+  startingIntersection: NavIntersection;
+  endingIntersection: NavIntersection;
   laneIndex: number;
 }) {
   const startingIntersectionPosition = getIntersectionPosition(startingIntersection);
@@ -202,13 +205,13 @@ function getLatestDirection({ roadCheckpoints } : {
  */
 export function buildTravelPath({ laneIndex, intersections } : {
   laneIndex: number;
-  intersections: Array<Intersection>;
+  intersections: Array<NavIntersection>;
 }) {
   const checkpoints = intersections.flatMap((intersection, i) => {
     const nextIntersection = intersections[(i + 1) % intersections.length];
     const lookAheadIntersection = intersections[(i + 2) % intersections.length];
 
-    const roadCheckpoints = makeRoadCheckpoints({
+    const roadCheckpoints: LaneCheckpoints = makeRoadCheckpoints({
       startingIntersection: intersection,
       endingIntersection: nextIntersection,
       laneIndex,
@@ -241,12 +244,13 @@ export function buildTravelPath({ laneIndex, intersections } : {
  * into multiple lanes.
  */
 export function buildJourney({ intersections, laneCount = 2 } : {
-  intersections: Array<Intersection>;
+  intersections: Array<NavIntersection>;
   laneCount?: number;
 }) {
-  const lanes = Array(laneCount).fill(null).map((_, laneIndex) => (
+  const lanes: Array<LaneCheckpoints> = Array(laneCount).fill(null).map((_, laneIndex) => (
     buildTravelPath({ laneIndex, intersections })
   ));
+  const journey: Journey = { lanes };
 
-  return { lanes };
+  return journey;
 }

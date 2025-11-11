@@ -11,6 +11,7 @@ import { useSelfDriving } from './selfDriving/useSelfDriving';
 import { SelfDrivingDebugVisualizer } from './selfDriving/SelfDrivingDebugVisualizer';
 import { globalSettings, GRAPHICS_MODES } from './globalSettings';
 import { getSignedAngle } from "./helpers/vectorHelpers";
+import { Journey, journeys } from "./selfDriving/journeys";
 
 const maxSteeringAngle = 0.35;
 const startingVelocity = new Vector3(0, 0, 0);
@@ -22,11 +23,13 @@ export function ControllableCar({
   startingPosition = defaultStartingPosition,
   startingDirection = defaultStartingDirection,
   isMainCharacter = false,
+  journey = journeys.clockwiseBlock,
 } : {
   color?: ColorRepresentation;
   startingPosition?: Vector3;
   startingDirection?: Vector3;
   isMainCharacter?: boolean;
+  journey?: Journey;
 }) {
   const speed = useRef(0);
   const velocity = useRef(startingVelocity);
@@ -107,6 +110,7 @@ export function ControllableCar({
     position,
     steeringValue: steeringValue.current,
     maxSteeringAngle,
+    journey,
   });
 
   const runAntiLockBrakes = useCallback(() => {

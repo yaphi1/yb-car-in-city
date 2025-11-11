@@ -3,13 +3,11 @@ import { useControls } from 'leva';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils, Vector3 } from 'three';
 import { getSignedAngle, getVectorFromStartToTarget } from '../helpers/vectorHelpers';
-import { buildTravelPath, getPathsToNextCheckpoints } from './navigation';
-import { journeys } from './journeys';
+import { getPathsToNextCheckpoints } from './navigation';
+import { Journey, journeys } from './journeys';
 
 const SPEED_LIMIT = 10;
 const CHECKPOINT_HIT_DISTANCE = 4;
-
-const lanes = journeys.clockwiseBlock.lanes;
 
 function getDesiredVelocity({ position, target, speed } : {
   position: Vector3;
@@ -70,6 +68,7 @@ export function useSelfDriving({
   position,
   steeringValue,
   maxSteeringAngle,
+  journey,
 } : {
   setAcceleration: ({ force }: { force: number; }) => void;
   setBrake: ({ force }: { force: number; }) => void;
@@ -78,20 +77,25 @@ export function useSelfDriving({
   position: Vector3;
   steeringValue: number;
   maxSteeringAngle: number;
+  journey: Journey;
 }) {
   const [laneIndex, setLaneIndex] = useState(1);
-  const checkpoints = useMemo(() => lanes[laneIndex], [laneIndex]);
+
+  const checkpoints = useMemo(() => {
+    return journey.lanes[laneIndex];
+  }, [journey, laneIndex]);
+
   const pathsToNextCheckpoints = useMemo(() => {
     return getPathsToNextCheckpoints({ checkpoints });
   }, [checkpoints]);
 
-  const changeLanes = () => {
-    setLaneIndex((index) => (index + 1) % lanes.length);
-  };
+  const changeLanes = useCallback(() => {
+    setLaneIndex((index) => (index + 1) % journey.lanes.length);
+  }, [journey]);
 
   useEffect(() => {
     setInterval(changeLanes, 4000);
-  }, []);
+  }, [changeLanes]);
 
   const desiredVelocity = useRef(velocity.clone());
   const { isSelfDriving } = useControls({
