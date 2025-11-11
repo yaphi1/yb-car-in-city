@@ -234,3 +234,19 @@ export function buildTravelPath({ laneIndex, intersections } : {
 
   return checkpoints;
 }
+
+/**
+ * Takes in a sequence of intersections and returns
+ * a sequence of self-driving checkpoints arranged
+ * into multiple lanes.
+ */
+export function buildJourney({ intersections, laneCount = 2 } : {
+  intersections: Array<Intersection>;
+  laneCount?: number;
+}) {
+  const lanes = Array(laneCount).fill(null).map((_, laneIndex) => (
+    buildTravelPath({ laneIndex, intersections })
+  ));
+
+  return { lanes };
+}

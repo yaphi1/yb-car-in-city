@@ -4,20 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils, Vector3 } from 'three';
 import { getSignedAngle, getVectorFromStartToTarget } from '../helpers/vectorHelpers';
 import { buildTravelPath, getPathsToNextCheckpoints } from './navigation';
+import { journeys } from './journeys';
 
 const SPEED_LIMIT = 10;
 const CHECKPOINT_HIT_DISTANCE = 4;
 
-const intersections =  [
-  { column: 0, row: 1 },
-  { column: 1, row: 1 },
-  { column: 1, row: 0 },
-  { column: 0, row: 0 },
-];
-const lanes = [
-  buildTravelPath({ laneIndex: 0, intersections }),
-  buildTravelPath({ laneIndex: 1, intersections }),
-];
+const lanes = journeys.clockwiseBlock.lanes;
 
 function getDesiredVelocity({ position, target, speed } : {
   position: Vector3;
