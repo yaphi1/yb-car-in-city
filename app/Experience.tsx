@@ -11,6 +11,7 @@ import { Fog } from './Fog';
 import { WireframeToggle } from './WireframeToggle';
 import { CityTileModel } from './CityTileModel';
 import { journeys } from "./selfDriving/journeys";
+import { RaycastTest } from "./experiments/RaycastTest";
 
 const startingPosition = new Vector3(156, 1, -80);
 // const startPositionToTestOrbit = new Vector3(148, 1, -80);
@@ -106,6 +107,8 @@ export function Experience() {
                 startingCheckpointIndex={4}
                 topSpeed={5}
               />
+
+              <RaycastTest />
             {/* </Debug> */}
 
             <WireframeToggle />
