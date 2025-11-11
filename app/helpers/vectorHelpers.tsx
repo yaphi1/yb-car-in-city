@@ -29,6 +29,20 @@ export function getVectorFromStartToTarget({ start, target, customLength } : {
   return vectorToTarget;
 }
 
+export function getSignedAngle(vectorA: Vector3, vectorB: Vector3) {
+  const angle = vectorA.angleTo(vectorB);
+  /**
+   * The cross product gives a perpendicular vector
+   * from a counterclockwise sweep from vectors `a` to `b`.
+   * 
+   * If it points up (positive), we're going counterclockwise.
+   * If down (negative), we're going clockwise.
+   */
+  const perpendicularVector = new Vector3().crossVectors(vectorA, vectorB);
+  const sign = Math.sign(perpendicularVector.y);
+  return angle * sign;
+}
+
 /**
  * Create a quaternion that rotates `startingDirection` to `direction`.
  * - Normalizes inputs.

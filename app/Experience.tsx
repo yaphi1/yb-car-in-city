@@ -12,7 +12,9 @@ import { WireframeToggle } from './WireframeToggle';
 import { CityTileModel } from './CityTileModel';
 
 const startingPosition = new Vector3(156, 1, -80);
-const startPositionToTestOrbit = new Vector3(148, 1, -80);
+// const startPositionToTestOrbit = new Vector3(148, 1, -80);
+const car2StartingPosition = new Vector3(148, 1, -70);
+const car2StartingDirection = new Vector3(0.5, 0, -1);
 
 export function Experience() {
   const carColor = useColors();
@@ -75,7 +77,7 @@ export function Experience() {
               <Ground />
               {cityTiles}
               <ControllableCar color={carColor} startingPosition={startingPosition} isMainCharacter={true} />
-              <ControllableCar color="#0098db" startingPosition={startPositionToTestOrbit} />
+              <ControllableCar color="#0098db" startingPosition={car2StartingPosition} startingDirection={car2StartingDirection} />
             {/* </Debug> */}
 
             <WireframeToggle />

@@ -2,7 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils, Vector3 } from 'three';
-import { getVectorFromStartToTarget } from '../helpers/vectorHelpers';
+import { getSignedAngle, getVectorFromStartToTarget } from '../helpers/vectorHelpers';
 import { buildTravelPath, getPathsToNextCheckpoints } from './navigation';
 
 const SPEED_LIMIT = 10;
@@ -37,20 +37,8 @@ function getTurnAngle({ velocity, desiredVelocity, maxSteeringAngle } : {
   desiredVelocity: Vector3;
   maxSteeringAngle: number;
 }) {
-  /**
-   * The cross product gives a perpendicular vector
-   * from a counterclockwise sweep from vectors `a` to `b`.
-   * 
-   * If it points up (positive), we're going counterclockwise.
-   * If down (negative), we're going clockwise.
-   */
-  const perpendicularVector = new Vector3().crossVectors(
-    desiredVelocity,
-    velocity
-  );
-  const streeringDirection = -Math.sign(perpendicularVector.y);
-
-  const turnAngle = streeringDirection * maxSteeringAngle;
+  const steeringDirection = getSignedAngle(velocity, desiredVelocity);
+  const turnAngle = steeringDirection * maxSteeringAngle;
   return turnAngle;
 }
 

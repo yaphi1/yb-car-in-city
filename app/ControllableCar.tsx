@@ -1,6 +1,6 @@
 import { ColorRepresentation, Group, MathUtils, Mesh, Object3DEventMap, Quaternion, Vector3 } from "three";
 import { useKeyboardControls } from "@react-three/drei";
-import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { WheelInfoOptions, useBox, useRaycastVehicle } from "@react-three/cannon";
 import { useWheels } from "./useWheels";
@@ -10,18 +10,22 @@ import { PolestarCar } from "./PolestarCar";
 import { useSelfDriving } from './selfDriving/useSelfDriving';
 import { SelfDrivingDebugVisualizer } from './selfDriving/SelfDrivingDebugVisualizer';
 import { globalSettings, GRAPHICS_MODES } from './globalSettings';
+import { getSignedAngle } from "./helpers/vectorHelpers";
 
 const maxSteeringAngle = 0.35;
-const startingDirection = new Vector3(0, 0, -1);
 const startingVelocity = new Vector3(0, 0, 0);
+const defaultStartingPosition = new Vector3(0, 0, 0);
+const defaultStartingDirection = new Vector3(0, 0, -1);
 
 export function ControllableCar({
   color = 0x5500aa,
-  startingPosition = new Vector3(0, 0, 0),
+  startingPosition = defaultStartingPosition,
+  startingDirection = defaultStartingDirection,
   isMainCharacter = false,
 } : {
   color?: ColorRepresentation;
   startingPosition?: Vector3;
+  startingDirection?: Vector3;
   isMainCharacter?: boolean;
 }) {
   const speed = useRef(0);
@@ -38,6 +42,12 @@ export function ControllableCar({
   const brakePressed = useKeyboardControls(state => state.brake);
   const isAntiLockBrakeClamped = useRef(false);
 
+  const startingRotation = useMemo(() => {
+    const angle = getSignedAngle(defaultStartingDirection, startingDirection);
+    const rotation = [0, angle, 0] as [number, number, number];
+    return rotation;
+  }, [startingDirection]);
+
   const width = 1.8;
   const height = 0.85;
   const front = 1.96;
@@ -49,6 +59,7 @@ export function ControllableCar({
       args: chassisBodyArgs,
       mass: 150,
       position: [startingPosition.x, startingPosition.y, startingPosition.z],
+      rotation: startingRotation,
     }),
     useRef<Group>(null)
   );
@@ -170,7 +181,7 @@ export function ControllableCar({
       // "just rotate your initial forward direction around the current rotation axis"
       // https://www.gamedev.net/forums/topic/56471-extracting-direction-vectors-from-quaternion/
       setHorizontalDirection(() => {
-        const updatedDirection = startingDirection.clone();
+        const updatedDirection = defaultStartingDirection.clone();
         updatedDirection.applyQuaternion(new Quaternion(...quaternion));
         updatedDirection.y = 0;
         return updatedDirection;
@@ -224,7 +235,7 @@ export function ControllableCar({
             steeringValue={steeringValue.current}
             position={position}
             chassisBodyRef={chassisBody}
-            rotation-y={Math.PI}
+            // rotation-y={Math.PI}
             wheelRefs={wheels}
           />
         </group>
