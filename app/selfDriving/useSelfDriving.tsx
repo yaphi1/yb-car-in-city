@@ -6,7 +6,6 @@ import { getSignedAngle, getVectorFromStartToTarget } from '../helpers/vectorHel
 import { getPathsToNextCheckpoints } from './navigation';
 import { Journey } from './journeys';
 
-const SPEED_LIMIT = 10;
 const CHECKPOINT_HIT_DISTANCE = 4;
 
 function getDesiredVelocity({ position, target, speed } : {
@@ -71,6 +70,7 @@ export function useSelfDriving({
   journey,
   startingLaneIndex,
   startingCheckpointIndex,
+  topSpeed,
 } : {
   setAcceleration: ({ force }: { force: number; }) => void;
   setBrake: ({ force }: { force: number; }) => void;
@@ -82,6 +82,7 @@ export function useSelfDriving({
   journey: Journey;
   startingLaneIndex: number;
   startingCheckpointIndex: number;
+  topSpeed: number;
 }) {
   const [laneIndex, setLaneIndex] = useState(startingLaneIndex);
 
@@ -115,12 +116,12 @@ export function useSelfDriving({
 
   const autoAccelerate = useCallback(() => {
     setBrake({ force: 0 });
-    if (speed < SPEED_LIMIT) {
+    if (speed < topSpeed) {
       setAcceleration({ force: 500 });
     } else {
       setAcceleration({ force: 0 });
     }
-  }, [speed, setAcceleration, setBrake]);
+  }, [speed, topSpeed, setAcceleration, setBrake]);
 
   const seek = useCallback(({ delta } : { delta: number }) => {
     autoAccelerate();

@@ -26,6 +26,7 @@ export function ControllableCar({
   journey = journeys.clockwiseBlock,
   startingLaneIndex = 0,
   startingCheckpointIndex = 0,
+  topSpeed = 10,
 } : {
   color?: ColorRepresentation;
   manualStartingPosition?: Vector3;
@@ -34,6 +35,7 @@ export function ControllableCar({
   journey?: Journey;
   startingLaneIndex?: number;
   startingCheckpointIndex?: number;
+  topSpeed?: number;
 }) {
   const speed = useRef(0);
   const velocity = useRef(startingVelocity);
@@ -126,6 +128,7 @@ export function ControllableCar({
     journey,
     startingLaneIndex,
     startingCheckpointIndex,
+    topSpeed,
   });
 
   const runAntiLockBrakes = useCallback(() => {
