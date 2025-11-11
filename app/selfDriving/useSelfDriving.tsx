@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils, Vector3 } from 'three';
 import { getSignedAngle, getVectorFromStartToTarget } from '../helpers/vectorHelpers';
 import { getPathsToNextCheckpoints } from './navigation';
-import { Journey, journeys } from './journeys';
+import { Journey } from './journeys';
 
 const SPEED_LIMIT = 10;
 const CHECKPOINT_HIT_DISTANCE = 4;
@@ -69,6 +69,8 @@ export function useSelfDriving({
   steeringValue,
   maxSteeringAngle,
   journey,
+  startingLaneIndex,
+  startingCheckpointIndex,
 } : {
   setAcceleration: ({ force }: { force: number; }) => void;
   setBrake: ({ force }: { force: number; }) => void;
@@ -78,8 +80,10 @@ export function useSelfDriving({
   steeringValue: number;
   maxSteeringAngle: number;
   journey: Journey;
+  startingLaneIndex: number;
+  startingCheckpointIndex: number;
 }) {
-  const [laneIndex, setLaneIndex] = useState(1);
+  const [laneIndex, setLaneIndex] = useState(startingLaneIndex);
 
   const checkpoints = useMemo(() => {
     return journey.lanes[laneIndex];
@@ -94,7 +98,7 @@ export function useSelfDriving({
   }, [journey]);
 
   useEffect(() => {
-    setInterval(changeLanes, 4000);
+    setInterval(changeLanes, 8000);
   }, [changeLanes]);
 
   const desiredVelocity = useRef(velocity.clone());
@@ -104,7 +108,7 @@ export function useSelfDriving({
       value: false,
     },
   });
-  const targetCheckpointIndex = useRef(0);
+  const targetCheckpointIndex = useRef((startingCheckpointIndex + 1) % checkpoints.length);
   const isOrbiting = useRef(false);
 
   const speed = velocity?.length() ?? 0;

@@ -12,27 +12,40 @@ import { SelfDrivingDebugVisualizer } from './selfDriving/SelfDrivingDebugVisual
 import { globalSettings, GRAPHICS_MODES } from './globalSettings';
 import { getSignedAngle } from "./helpers/vectorHelpers";
 import { Journey, journeys } from "./selfDriving/journeys";
+import { getOrientationAtJourneyStart } from "./selfDriving/navigation";
 
 const maxSteeringAngle = 0.35;
 const startingVelocity = new Vector3(0, 0, 0);
-const defaultStartingPosition = new Vector3(0, 0, 0);
-const defaultStartingDirection = new Vector3(0, 0, -1);
+const north = new Vector3(0, 0, -1);
 
 export function ControllableCar({
   color = 0x5500aa,
-  startingPosition = defaultStartingPosition,
-  startingDirection = defaultStartingDirection,
+  manualStartingPosition,
+  manualStartingDirection,
   isMainCharacter = false,
   journey = journeys.clockwiseBlock,
+  startingLaneIndex = 0,
+  startingCheckpointIndex = 0,
 } : {
   color?: ColorRepresentation;
-  startingPosition?: Vector3;
-  startingDirection?: Vector3;
+  manualStartingPosition?: Vector3;
+  manualStartingDirection?: Vector3;
   isMainCharacter?: boolean;
   journey?: Journey;
+  startingLaneIndex?: number;
+  startingCheckpointIndex?: number;
 }) {
   const speed = useRef(0);
   const velocity = useRef(startingVelocity);
+
+  const orientationAtJourneyStart = useMemo(() => {
+    return getOrientationAtJourneyStart({
+      journey, startingLaneIndex, startingCheckpointIndex
+    });
+  }, [journey, startingLaneIndex, startingCheckpointIndex]);
+
+  const startingPosition = manualStartingPosition || orientationAtJourneyStart.position;
+  const startingDirection = manualStartingDirection || orientationAtJourneyStart.direction;
 
   const [position, setPosition] = useState(startingPosition);
   const [horizontalDirection, setHorizontalDirection] = useState(startingDirection);
@@ -46,7 +59,7 @@ export function ControllableCar({
   const isAntiLockBrakeClamped = useRef(false);
 
   const startingRotation = useMemo(() => {
-    const angle = getSignedAngle(defaultStartingDirection, startingDirection);
+    const angle = getSignedAngle(north, startingDirection);
     const rotation = [0, angle, 0] as [number, number, number];
     return rotation;
   }, [startingDirection]);
@@ -111,6 +124,8 @@ export function ControllableCar({
     steeringValue: steeringValue.current,
     maxSteeringAngle,
     journey,
+    startingLaneIndex,
+    startingCheckpointIndex,
   });
 
   const runAntiLockBrakes = useCallback(() => {
@@ -185,7 +200,7 @@ export function ControllableCar({
       // "just rotate your initial forward direction around the current rotation axis"
       // https://www.gamedev.net/forums/topic/56471-extracting-direction-vectors-from-quaternion/
       setHorizontalDirection(() => {
-        const updatedDirection = defaultStartingDirection.clone();
+        const updatedDirection = north.clone();
         updatedDirection.applyQuaternion(new Quaternion(...quaternion));
         updatedDirection.y = 0;
         return updatedDirection;

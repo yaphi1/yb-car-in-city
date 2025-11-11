@@ -254,3 +254,25 @@ export function buildJourney({ intersections, laneCount = 2 } : {
 
   return journey;
 }
+
+export function getOrientationAtJourneyStart({
+  journey, startingLaneIndex, startingCheckpointIndex
+} : {
+  journey: Journey;
+  startingLaneIndex: number;
+  startingCheckpointIndex: number;
+}) {
+  const laneCheckpoints = journey.lanes[startingLaneIndex];
+  const checkpointStart = laneCheckpoints[startingCheckpointIndex];
+  const checkpointNext = laneCheckpoints[
+    (startingCheckpointIndex + 1) % laneCheckpoints.length
+  ];
+
+  const position = checkpointStart;
+  const direction = getVectorFromStartToTarget({
+    start: checkpointStart,
+    target: checkpointNext,
+  }).normalize();
+
+  return { position, direction };
+}
