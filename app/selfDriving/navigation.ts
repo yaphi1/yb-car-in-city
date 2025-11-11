@@ -113,7 +113,7 @@ export function makeRoadCheckpoints({
   ;
 
   const laneInnerDistance = laneEntranceStabilizer.distanceTo(laneExitStabilizer);
-  const desiredSegmentLength = 16;
+  const desiredSegmentLength = 32;
   const numberOfSegments = Math.floor(laneInnerDistance / desiredSegmentLength);
 
   const laneInnerVector = getVectorFromStartToTarget({

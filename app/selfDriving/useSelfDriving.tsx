@@ -1,24 +1,23 @@
 import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils, Vector3 } from 'three';
 import { getVectorFromStartToTarget } from '../helpers/vectorHelpers';
-import { buildTravelPath, getPathsToNextCheckpoints, makeRoadCheckpoints } from './navigation';
+import { buildTravelPath, getPathsToNextCheckpoints } from './navigation';
 
 const SPEED_LIMIT = 10;
 const CHECKPOINT_HIT_DISTANCE = 2;
 
-const checkpoints = buildTravelPath({
-  laneIndex: 1,
-  intersections: [
-    { column: 0, row: 1 },
-    { column: 1, row: 1 },
-    { column: 1, row: 0 },
-    { column: 0, row: 0 },
-  ],
-});
-
-const pathsToNextCheckpoints = getPathsToNextCheckpoints({ checkpoints });
+const intersections =  [
+  { column: 0, row: 1 },
+  { column: 1, row: 1 },
+  { column: 1, row: 0 },
+  { column: 0, row: 0 },
+];
+const lanes = [
+  buildTravelPath({ laneIndex: 0, intersections }),
+  buildTravelPath({ laneIndex: 1, intersections }),
+];
 
 function getDesiredVelocity({ position, target, speed } : {
   position: Vector3;
@@ -100,6 +99,20 @@ export function useSelfDriving({
   steeringValue: number;
   maxSteeringAngle: number;
 }) {
+  const [laneIndex, setLaneIndex] = useState(1);
+  const checkpoints = useMemo(() => lanes[laneIndex], [laneIndex]);
+  const pathsToNextCheckpoints = useMemo(() => {
+    return getPathsToNextCheckpoints({ checkpoints });
+  }, [checkpoints]);
+
+  const changeLanes = () => {
+    setLaneIndex((index) => (index + 1) % lanes.length);
+  };
+
+  useEffect(() => {
+    setInterval(changeLanes, 4000);
+  }, []);
+
   const desiredVelocity = useRef(velocity.clone());
   const { isSelfDriving } = useControls({
     isSelfDriving: {
@@ -170,6 +183,7 @@ export function useSelfDriving({
     maxSteeringAngle,
     steeringValue,
     updateSteering,
+    checkpoints,
   ]);
 
   useFrame((_, delta) => {
