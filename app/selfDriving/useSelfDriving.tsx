@@ -6,7 +6,7 @@ import { getVectorFromStartToTarget } from '../helpers/vectorHelpers';
 import { buildTravelPath, getPathsToNextCheckpoints } from './navigation';
 
 const SPEED_LIMIT = 10;
-const CHECKPOINT_HIT_DISTANCE = 2;
+const CHECKPOINT_HIT_DISTANCE = 4;
 
 const intersections =  [
   { column: 0, row: 1 },
@@ -135,6 +135,7 @@ export function useSelfDriving({
   }, [speed, setAcceleration, setBrake]);
 
   const seek = useCallback(({ delta } : { delta: number }) => {
+    autoAccelerate();
     const typedWindow = window as typeof window & Record<string, unknown>;
     const target = checkpoints[targetCheckpointIndex.current];
 
@@ -184,6 +185,7 @@ export function useSelfDriving({
     steeringValue,
     updateSteering,
     checkpoints,
+    autoAccelerate,
   ]);
 
   useFrame((_, delta) => {
@@ -191,12 +193,6 @@ export function useSelfDriving({
       seek({ delta });
     }
   });
-
-  useEffect(() => {
-    if (isSelfDriving) {
-      autoAccelerate();
-    }
-  }, [isSelfDriving, autoAccelerate, seek]);
 
   return {
     isSelfDriving,
