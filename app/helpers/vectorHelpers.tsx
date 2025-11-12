@@ -31,6 +31,7 @@ export function getVectorFromStartToTarget({ start, target, customLength } : {
 
 export function getSignedAngle(vectorA: Vector3, vectorB: Vector3) {
   const angle = vectorA.angleTo(vectorB);
+
   /**
    * The cross product gives a perpendicular vector
    * from a counterclockwise sweep from vectors `a` to `b`.
@@ -39,8 +40,14 @@ export function getSignedAngle(vectorA: Vector3, vectorB: Vector3) {
    * If down (negative), we're going clockwise.
    */
   const perpendicularVector = new Vector3().crossVectors(vectorA, vectorB);
-  const sign = Math.sign(perpendicularVector.y);
-  return angle * sign;
+
+  /**
+   * This handles an edge case where the sign is `-0`
+   * if the angle is exactly `180deg` */
+  const isAngleNearPi = angle.toFixed(2) === '3.14';
+  const sign = isAngleNearPi ? 1 : Math.sign(perpendicularVector.y);
+
+  return isAngleNearPi ? angle : angle * sign;
 }
 
 /**
