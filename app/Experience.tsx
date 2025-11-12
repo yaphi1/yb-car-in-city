@@ -90,28 +90,32 @@ export function Experience() {
                 color="#00aa55"
                 journey={journeys.clockwiseBlock}
                 startingLaneIndex={1}
-                startingCheckpointIndex={2}
+                // startingCheckpointIndex={2}
+                startingCheckpointIndex={5}
                 topSpeed={5}
               />
               <ControllableCar
                 color="#ddaa00"
                 journey={journeys.clockwiseBlock}
                 startingLaneIndex={0}
-                startingCheckpointIndex={3}
+                // startingCheckpointIndex={3}
+                startingCheckpointIndex={6}
                 topSpeed={7}
               />
               <ControllableCar
                 color="#0098db"
                 journey={journeys.counterclockwiseBlock}
                 startingLaneIndex={0}
-                startingCheckpointIndex={0}
+                // startingCheckpointIndex={0}
+                startingCheckpointIndex={30}
                 topSpeed={5}
               />
               <ControllableCar
                 color="#ffffff"
                 journey={journeys.counterclockwiseBlock}
                 startingLaneIndex={0}
-                startingCheckpointIndex={4}
+                // startingCheckpointIndex={4}
+                startingCheckpointIndex={2}
                 topSpeed={5}
               />
 
