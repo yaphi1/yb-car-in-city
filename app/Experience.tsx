@@ -118,6 +118,43 @@ export function Experience() {
                 startingCheckpointIndex={2}
                 topSpeed={5}
               />
+              
+              {/* Additional traffic */}
+              <ControllableCar
+                color="#333333"
+                journey={journeys.counterclockwiseBlock}
+                startingLaneIndex={0}
+                startingCheckpointIndex={10}
+                topSpeed={5}
+              />
+              <ControllableCar
+                color="#0098db"
+                journey={journeys.counterclockwiseBlock}
+                startingLaneIndex={0}
+                startingCheckpointIndex={13}
+                topSpeed={5}
+              />
+              <ControllableCar
+                color="#858d96"
+                journey={journeys.counterclockwiseBlock}
+                startingLaneIndex={1}
+                startingCheckpointIndex={12}
+                topSpeed={7}
+              />
+              <ControllableCar
+                color="#a79d72"
+                journey={journeys.clockwiseBlock}
+                startingLaneIndex={0}
+                startingCheckpointIndex={0}
+                topSpeed={5}
+              />
+              <ControllableCar
+                color="#ffffff"
+                journey={journeys.clockwiseBlock}
+                startingLaneIndex={0}
+                startingCheckpointIndex={1}
+                topSpeed={5}
+              />
 
             {/* </Debug> */}
 
