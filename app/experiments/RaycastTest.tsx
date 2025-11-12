@@ -26,7 +26,7 @@ export function RaycastTest() {
       const result = raycaster.intersectObject(blueRef.current);
       console.log('yaphi - result', result);
     }, 1000);
-  }, [redRef.current, blueRef.current]);
+  }, []);
 
   return (
     <>

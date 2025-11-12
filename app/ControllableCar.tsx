@@ -257,7 +257,6 @@ export function ControllableCar({
             steeringValue={steeringValue.current}
             position={position}
             chassisBodyRef={chassisBody}
-            // rotation-y={Math.PI}
             wheelRefs={wheels}
           />
         </group>
