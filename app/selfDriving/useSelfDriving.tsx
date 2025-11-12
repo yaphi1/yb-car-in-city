@@ -106,7 +106,7 @@ export function useSelfDriving({
     const origin = position;
     const direction = velocity.normalize();
     const near = 3;
-    const far = 12;
+    const far = speed + 5;
 
     const raycaster = new Raycaster(origin, direction, near, far);
 
