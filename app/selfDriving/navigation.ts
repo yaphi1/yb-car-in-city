@@ -94,13 +94,13 @@ export function makeRoadCheckpoints({
   const laneVector = getVectorFromStartToTarget({ start: laneStart, target: laneEnd });
 
   /** Distance from center of intersection to lane entrance */
-  const entranceDistance = 15;
+  const entranceDistance = 18;
 
   /**
    * The stabilizer is a checkpoint right after the lane entrance
    * whose goal is to stabilize the steering.
   */
-  const stabilizerDistance = 22;
+  const stabilizerDistance = 30;
   
   const laneEntrance = laneStart.clone()
     .add(laneVector.clone().setLength(entranceDistance))

@@ -94,11 +94,11 @@ export function Experience() {
                 topSpeed={5}
               />
               <ControllableCar
-                color="#00aa55"
+                color="#ddaa00"
                 journey={journeys.clockwiseBlock}
                 startingLaneIndex={0}
                 startingCheckpointIndex={3}
-                topSpeed={5}
+                topSpeed={7}
               />
               <ControllableCar
                 color="#0098db"

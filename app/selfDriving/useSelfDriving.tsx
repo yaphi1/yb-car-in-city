@@ -7,7 +7,7 @@ import { getPathsToNextCheckpoints } from './navigation';
 import { Journey } from './journeys';
 import { useObstacleDetection } from './useObstacleDetection';
 
-const CHECKPOINT_HIT_DISTANCE = 4;
+const CHECKPOINT_HIT_DISTANCE = 5;
 
 function getDesiredVelocity({ position, target, speed } : {
   position: Vector3;
@@ -180,7 +180,7 @@ export function useSelfDriving({
     const shouldTurn = angleToTarget > angleTolerance;
 
     const targetSteeringValue = shouldTurn ? turnAngle : 0;
-    const lerpFactor = 3 * delta;
+    const lerpFactor = 5 * delta;
     const updatedSteeringValue = MathUtils.lerp(steeringValue, targetSteeringValue, lerpFactor);
 
     updateSteering(updatedSteeringValue);
