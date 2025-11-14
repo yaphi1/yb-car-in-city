@@ -11,8 +11,8 @@ import { useSelfDriving } from './selfDriving/useSelfDriving';
 import { SelfDrivingDebugVisualizer } from './selfDriving/SelfDrivingDebugVisualizer';
 import { globalSettings, GRAPHICS_MODES } from './globalSettings';
 import { getSignedAngle } from "./helpers/vectorHelpers";
-import { Journey, journeys } from "./selfDriving/journeys";
-import { getOrientationAtJourneyStart } from "./selfDriving/navigation";
+import { journeys } from "./selfDriving/journeys";
+import { getOrientationAtJourneyStart, Journey } from "./selfDriving/navigation";
 
 const maxSteeringAngle = 0.4;
 const startingVelocity = new Vector3(0, 0, 0);

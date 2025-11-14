@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MathUtils, Vector3 } from 'three';
 import { getSignedAngle, getVectorFromStartToTarget } from '../helpers/vectorHelpers';
 import { getPathsToNextCheckpoints } from './navigation';
-import { Journey } from './journeys';
+import { Journey } from './navigation';
 import { useObstacleDetection } from './useObstacleDetection';
 
 const CHECKPOINT_HIT_DISTANCE = 5;

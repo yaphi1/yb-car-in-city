@@ -1,6 +1,6 @@
 import { Vector3 } from 'three';
 import { getPointsAlongVectors, getVectorFromStartToTarget } from '../helpers/vectorHelpers';
-import { Journey } from './journeys';
+import { isDeepStrictEqual } from 'util';
 
 const UP_VECTOR = new Vector3(0, 1, 0);
 
@@ -10,6 +10,10 @@ export type NavIntersection = {
 };
 
 export type LaneCheckpoints = Array<Vector3>;
+
+export type Journey = {
+  lanes: Array<LaneCheckpoints>;
+};
 
 export function getPathsToNextCheckpoints({ checkpoints } : {
   checkpoints: Array<Vector3>;
@@ -238,12 +242,56 @@ export function buildTravelPath({ laneIndex, intersections } : {
   return checkpoints;
 }
 
+export const DIRECTIONS = {
+  NORTH: 'NORTH',
+  SOUTH: 'SOUTH',
+  EAST: 'EAST',
+  WEST: 'WEST',
+} as const;
+
+export type Direction = keyof typeof DIRECTIONS;
+
 /**
- * Takes in a sequence of intersections and returns
+ * Takes in a sequence of directions and returns
+ * a sequence of intersections.
+ */
+export function convertDirectionsToIntersections({
+  startingIntersection,
+  directions,
+} : {
+  startingIntersection: NavIntersection;
+  directions: Array<Direction>;
+}) {
+  const intersections: Array<NavIntersection> = [{ ...startingIntersection }];
+
+  directions.forEach(direction => {
+    const nextIntersection = { ...intersections[intersections.length - 1] };
+    if (direction === DIRECTIONS.NORTH) {
+      nextIntersection.row++;
+    }
+    if (direction === DIRECTIONS.SOUTH) {
+      nextIntersection.row--;
+    }
+    if (direction === DIRECTIONS.EAST) {
+      nextIntersection.column++;
+    }
+    if (direction === DIRECTIONS.WEST) {
+      nextIntersection.column--;
+    }
+    if (JSON.stringify(nextIntersection) !== JSON.stringify(startingIntersection)) {
+      intersections.push(nextIntersection);
+    }
+  });
+
+  return intersections;
+}
+
+/**
+ * Takes in a sequence of `intersections` and returns
  * a sequence of self-driving checkpoints arranged
  * into multiple lanes.
  */
-export function buildJourney({ intersections, laneCount = 2 } : {
+export function buildJourneyFromIntersections({ intersections, laneCount = 2 } : {
   intersections: Array<NavIntersection>;
   laneCount?: number;
 }) {
@@ -251,6 +299,29 @@ export function buildJourney({ intersections, laneCount = 2 } : {
     buildTravelPath({ laneIndex, intersections })
   ));
   const journey: Journey = { lanes };
+
+  return journey;
+}
+
+/**
+ * Takes in a sequence of `directions` and returns
+ * a sequence of self-driving checkpoints arranged
+ * into multiple lanes.
+ */
+export function buildJourneyFromDirections({
+  startingIntersection,
+  directions,
+  laneCount = 2,
+} : {
+  startingIntersection: NavIntersection;
+  directions: Array<Direction>;
+  laneCount?: number;
+}) {
+  const intersections = convertDirectionsToIntersections({
+    startingIntersection,
+    directions,
+  });
+  const journey = buildJourneyFromIntersections({ intersections, laneCount });
 
   return journey;
 }

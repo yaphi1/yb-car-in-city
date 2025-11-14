@@ -1,24 +1,22 @@
-import { buildJourney, LaneCheckpoints } from './navigation';
-
-export type Journey = {
-  lanes: Array<LaneCheckpoints>;
-};
+import { buildJourneyFromDirections, DIRECTIONS } from './navigation';
 
 export const journeys = {
-  clockwiseBlock: buildJourney({
-    intersections: [
-      { column: 0, row: 0 },
-      { column: 0, row: 1 },
-      { column: 1, row: 1 },
-      { column: 1, row: 0 },
-    ]
+  clockwiseBlock: buildJourneyFromDirections({
+    startingIntersection: { column: 0, row: 0 },
+    directions: [
+      DIRECTIONS.NORTH,
+      DIRECTIONS.EAST,
+      DIRECTIONS.SOUTH,
+      DIRECTIONS.WEST,
+    ],
   }),
-  counterclockwiseBlock: buildJourney({
-    intersections: [
-      { column: 1, row: 1 },
-      { column: 0, row: 1 },
-      { column: 0, row: 0 },
-      { column: 1, row: 0 },
-    ]
+  counterclockwiseBlock: buildJourneyFromDirections({
+    startingIntersection: { column: 1, row: 1 },
+    directions: [
+      DIRECTIONS.WEST,
+      DIRECTIONS.SOUTH,
+      DIRECTIONS.EAST,
+      DIRECTIONS.NORTH,
+    ],
   }),
 };
