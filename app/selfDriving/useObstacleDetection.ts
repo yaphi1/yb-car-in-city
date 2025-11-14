@@ -1,38 +1,32 @@
-import { useThree } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
-import { Object3D, Raycaster, Vector3 } from 'three';
+import { Raycaster, Vector3 } from 'three';
+import { useCarList } from './useCarList';
 
 export function useObstacleDetection({ position, velocity } : {
   position: Vector3;
   velocity: Vector3;
 }) {
-  const { scene } = useThree();
   const [isObstacleDetected, setIsObstacleDetected] = useState(false);
+
+  const carList = useCarList();
 
   useEffect(() => {
     const speed = velocity.length();
     const origin = position;
-    const direction = velocity.normalize();
+    const direction = velocity.clone().normalize();
     const near = 3;
     const far = speed + 5;
 
     const raycaster = new Raycaster(origin, direction, near, far);
 
-    const otherCars: Array<Object3D> = [];
-    scene.traverse((obj: Object3D) => {
-      if (obj.name === 'car') {
-        otherCars.push(obj);
-      }
-    });
-
-    const detectedObstacles = raycaster.intersectObjects(otherCars);
+    const detectedObstacles = raycaster.intersectObjects(carList);
 
     if (detectedObstacles.length) {
       setIsObstacleDetected(true);
     } else {
       setIsObstacleDetected(false);
     }
-  }, [scene, position, velocity]);
+  }, [carList, position, velocity]);
 
   return {
     isObstacleDetected,
