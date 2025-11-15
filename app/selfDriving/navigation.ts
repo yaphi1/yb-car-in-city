@@ -339,7 +339,8 @@ export function getOrientationAtJourneyStart({
     (startingCheckpointIndex + 1) % laneCheckpoints.length
   ];
 
-  const position = checkpointStart;
+  const position = checkpointStart.clone();
+  position.y = 1;
   const direction = getVectorFromStartToTarget({
     start: checkpointStart,
     target: checkpointNext,
