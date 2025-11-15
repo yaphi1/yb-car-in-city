@@ -53,14 +53,8 @@ export function getSignedAngle(vectorA: Vector3, vectorB: Vector3) {
 
 /**
  * Create a quaternion that rotates `startingDirection` to `direction`.
- * - Normalizes inputs.
- * - Handles opposite-direction (180°) edge case.
  * 
- * Note:
- * This function was generated with Copilot and lightly edited.
- * Normally, I'd investigate it in more depth, but since this
- * is peripheral to the main project and it seems to work,
- * I'll leave this as an exercise to come back to later.
+ * Note: This function normalizes inputs so you won't have to.
  */
 export function setQuaternionFromDirection({
   startingDirection = new Vector3(0, 0, -1),
@@ -72,21 +66,5 @@ export function setQuaternionFromDirection({
   const dir = direction.clone().normalize();
   const start = startingDirection.clone().normalize();
 
-  const dot = start.dot(dir);
-
-  // Opposite direction -> 180deg around any orthogonal axis
-  // TODO: investigate suspicious constant
-  if (dot < -0.999999) {
-    const ortho = new Vector3(1, 0, 0).cross(start);
-
-    // TODO: investigate suspicious constant
-    if (ortho.lengthSq() < 1e-6) {
-      ortho.set(0, 1, 0).cross(start);
-    }
-    ortho.normalize();
-    return new Quaternion().setFromAxisAngle(ortho, Math.PI);
-  }
-
-  // General case
   return new Quaternion().setFromUnitVectors(start, dir);
 }
