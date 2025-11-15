@@ -6,6 +6,7 @@ import { getSignedAngle, getVectorFromStartToTarget } from '../helpers/vectorHel
 import { getPathsToNextCheckpoints } from './navigation';
 import { Journey } from './navigation';
 import { useObstacleDetection } from './useObstacleDetection';
+import { useLaneChangeSafety } from './useLaneChangeSafety';
 
 const CHECKPOINT_HIT_DISTANCE = 5;
 
@@ -96,11 +97,21 @@ export function useSelfDriving({
   const checkpoints = useMemo(() => journey.lanes[laneIndex], [journey, laneIndex]);
   const pathsToNextCheckpoints = useMemo(() => getPathsToNextCheckpoints({ checkpoints }), [checkpoints]);
   const [isChangingLanes, setIsChangingLanes] = useState(false);
+  const isBraking = useRef(false);
+  const targetSpeed = useRef(topSpeed);
   const indexOfLastLaneChange = useRef<number | null>(null);
   const isOrbiting = useRef(false);
   const desiredVelocity = useRef(velocity.clone());
   const { isObstacleDetected } = useObstacleDetection({
     isSelfDriving,
+    position,
+    velocity,
+    desiredVelocity: desiredVelocity.current,
+  });
+  const { isLaneChangeSafe } = useLaneChangeSafety({
+    isSelfDriving,
+    laneIndex,
+    targetLaneIndex: (laneIndex + 1) % 2,
     position,
     velocity,
     desiredVelocity: desiredVelocity.current,
@@ -116,11 +127,22 @@ export function useSelfDriving({
   }, [journey.lanes.length]);
 
   const avoidObstacles = useCallback(() => {
+    // console.log('yaphi - speed', speed);
     if (!isChangingLanes) {
       if (isObstacleDetected) {
-        changeLanes();
-        indexOfLastLaneChange.current = targetCheckpointIndex;
-        setIsChangingLanes(true);
+        console.log('yaphi - isObstacleDetected', isObstacleDetected);
+        // changeLanes();
+        // indexOfLastLaneChange.current = targetCheckpointIndex;
+        // setIsChangingLanes(true);
+
+        console.log('yaphi - isLaneChangeSafe', isLaneChangeSafe);
+
+        // if target lane is also blocked
+        // setBrake({force: 10});
+        // isBraking.current = true;
+        // targetSpeed.current = speed;
+      } else if (!isObstacleDetected) {
+        isBraking.current = false;
       }
     }
     const hasReachedNextCheckpoint = isChangingLanes &&
@@ -129,20 +151,32 @@ export function useSelfDriving({
     if (hasReachedNextCheckpoint) {
       setIsChangingLanes(false);
     }
-  }, [changeLanes, isChangingLanes, isObstacleDetected, targetCheckpointIndex]);
+  // }, [
+  //   speed,
+  //   setBrake,
+  //   changeLanes,
+  //   isChangingLanes,
+  //   isObstacleDetected,
+  //   targetCheckpointIndex,
+  //   runAntiLockBrakes,
+  // ]);
+  }, [isChangingLanes, targetCheckpointIndex, isObstacleDetected, isLaneChangeSafe]);
 
   useEffect(() => {
     avoidObstacles();
   }, [avoidObstacles]);
 
   const autoAccelerate = useCallback(() => {
+    if (isBraking.current) {
+      return;
+    }
     setBrake({ force: 0 });
-    if (speed < topSpeed) {
+    if (speed < targetSpeed.current) {
       setAcceleration({ force: 500 });
     } else {
       setAcceleration({ force: 0 });
     }
-  }, [speed, topSpeed, setAcceleration, setBrake]);
+  }, [speed, setAcceleration, setBrake]);
 
   const seek = useCallback(({ delta } : { delta: number }) => {
     autoAccelerate();

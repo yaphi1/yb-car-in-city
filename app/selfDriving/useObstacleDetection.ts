@@ -2,11 +2,20 @@ import { useEffect, useState } from 'react';
 import { Raycaster, Vector3 } from 'three';
 import { useCarList } from './useCarList';
 
-export function useObstacleDetection({ isSelfDriving, position, velocity, desiredVelocity } : {
+export function useObstacleDetection({
+  isSelfDriving,
+  position,
+  velocity,
+  desiredVelocity,
+  customNear,
+  customFar,
+} : {
   isSelfDriving: boolean;
   position: Vector3;
   velocity: Vector3;
   desiredVelocity: Vector3;
+  customNear?: number;
+  customFar?: number;
 }) {
   const [isObstacleDetected, setIsObstacleDetected] = useState(false);
 
@@ -19,8 +28,8 @@ export function useObstacleDetection({ isSelfDriving, position, velocity, desire
     const speed = velocity.length();
     const origin = position;
     const direction = desiredVelocity.clone().normalize();
-    const near = 3;
-    const far = speed + 5;
+    const near = customNear ?? 3;
+    const far = customFar ?? speed + 5;
 
     const raycaster = new Raycaster(origin, direction, near, far);
 
@@ -32,7 +41,7 @@ export function useObstacleDetection({ isSelfDriving, position, velocity, desire
     } else {
       setIsObstacleDetected(false);
     }
-  }, [isSelfDriving, carList, position, velocity, desiredVelocity]);
+  }, [carList, position, velocity, desiredVelocity, customNear, customFar, isSelfDriving]);
 
   return {
     isObstacleDetected,

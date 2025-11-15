@@ -83,6 +83,29 @@ export function Experience() {
                 isMainCharacter={true}
                 journey={journeys.clockwiseBlock}
                 startingLaneIndex={1}
+                startingCheckpointIndex={6}
+                topSpeed={10}
+              />
+              <ControllableCar
+                color={carColor}
+                journey={journeys.clockwiseBlock}
+                startingLaneIndex={1}
+                startingCheckpointIndex={7}
+                topSpeed={5}
+              />
+              <ControllableCar
+                color={carColor}
+                journey={journeys.clockwiseBlock}
+                startingLaneIndex={0}
+                startingCheckpointIndex={7}
+                topSpeed={5}
+              />
+
+              {/* <ControllableCar
+                color={carColor}
+                isMainCharacter={true}
+                journey={journeys.clockwiseBlock}
+                startingLaneIndex={1}
                 startingCheckpointIndex={1}
                 topSpeed={10}
               />
@@ -118,8 +141,9 @@ export function Experience() {
                 startingCheckpointIndex={2}
                 topSpeed={5}
               />
-              
-              {/* Additional traffic */}
+
+
+
               <ControllableCar
                 color="#333333"
                 journey={journeys.counterclockwiseBlock}
@@ -154,7 +178,7 @@ export function Experience() {
                 startingLaneIndex={0}
                 startingCheckpointIndex={1}
                 topSpeed={5}
-              />
+              /> */}
 
             {/* </Debug> */}
 
