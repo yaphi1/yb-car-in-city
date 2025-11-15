@@ -90,9 +90,13 @@ export function useSelfDriving({
   const pathsToNextCheckpoints = useMemo(() => getPathsToNextCheckpoints({ checkpoints }), [checkpoints]);
   const [isChangingLanes, setIsChangingLanes] = useState(false);
   const indexOfLastLaneChange = useRef<number | null>(null);
-  const { isObstacleDetected } = useObstacleDetection({ position, velocity });
   const isOrbiting = useRef(false);
   const desiredVelocity = useRef(velocity.clone());
+  const { isObstacleDetected } = useObstacleDetection({
+    position,
+    velocity,
+    desiredVelocity: desiredVelocity.current,
+  });
   const [targetCheckpointIndex, setTargetCheckpointIndex] = useState(
     (startingCheckpointIndex + 1) % checkpoints.length
   );

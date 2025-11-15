@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { Raycaster, Vector3 } from 'three';
 import { useCarList } from './useCarList';
 
-export function useObstacleDetection({ position, velocity } : {
+export function useObstacleDetection({ position, velocity, desiredVelocity } : {
   position: Vector3;
   velocity: Vector3;
+  desiredVelocity: Vector3;
 }) {
   const [isObstacleDetected, setIsObstacleDetected] = useState(false);
 
@@ -13,7 +14,7 @@ export function useObstacleDetection({ position, velocity } : {
   useEffect(() => {
     const speed = velocity.length();
     const origin = position;
-    const direction = velocity.clone().normalize();
+    const direction = desiredVelocity.clone().normalize();
     const near = 3;
     const far = speed + 5;
 
@@ -26,7 +27,7 @@ export function useObstacleDetection({ position, velocity } : {
     } else {
       setIsObstacleDetected(false);
     }
-  }, [carList, position, velocity]);
+  }, [carList, position, velocity, desiredVelocity]);
 
   return {
     isObstacleDetected,
