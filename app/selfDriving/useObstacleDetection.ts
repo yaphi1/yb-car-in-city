@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Raycaster, Vector3 } from 'three';
 import { useCarList } from './useCarList';
 
-export function useObstacleDetection({ position, velocity, desiredVelocity } : {
+export function useObstacleDetection({ isSelfDriving, position, velocity, desiredVelocity } : {
+  isSelfDriving: boolean;
   position: Vector3;
   velocity: Vector3;
   desiredVelocity: Vector3;
@@ -12,6 +13,9 @@ export function useObstacleDetection({ position, velocity, desiredVelocity } : {
   const carList = useCarList();
 
   useEffect(() => {
+    if (!isSelfDriving) {
+      return;
+    }
     const speed = velocity.length();
     const origin = position;
     const direction = desiredVelocity.clone().normalize();
@@ -27,7 +31,7 @@ export function useObstacleDetection({ position, velocity, desiredVelocity } : {
     } else {
       setIsObstacleDetected(false);
     }
-  }, [carList, position, velocity, desiredVelocity]);
+  }, [isSelfDriving, carList, position, velocity, desiredVelocity]);
 
   return {
     isObstacleDetected,

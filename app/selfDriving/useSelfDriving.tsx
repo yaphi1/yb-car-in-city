@@ -85,6 +85,13 @@ export function useSelfDriving({
   startingCheckpointIndex: number;
   topSpeed: number;
 }) {
+  const { isSelfDriving } = useControls({
+    isSelfDriving: {
+      label: 'Self-driving',
+      value: false,
+    },
+  });
+
   const [laneIndex, setLaneIndex] = useState(startingLaneIndex);
   const checkpoints = useMemo(() => journey.lanes[laneIndex], [journey, laneIndex]);
   const pathsToNextCheckpoints = useMemo(() => getPathsToNextCheckpoints({ checkpoints }), [checkpoints]);
@@ -93,6 +100,7 @@ export function useSelfDriving({
   const isOrbiting = useRef(false);
   const desiredVelocity = useRef(velocity.clone());
   const { isObstacleDetected } = useObstacleDetection({
+    isSelfDriving,
     position,
     velocity,
     desiredVelocity: desiredVelocity.current,
@@ -100,13 +108,6 @@ export function useSelfDriving({
   const [targetCheckpointIndex, setTargetCheckpointIndex] = useState(
     (startingCheckpointIndex + 1) % checkpoints.length
   );
-
-  const { isSelfDriving } = useControls({
-    isSelfDriving: {
-      label: 'Self-driving',
-      value: false,
-    },
-  });
 
   const speed = velocity?.length() ?? 0;
 
