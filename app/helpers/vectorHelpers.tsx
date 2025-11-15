@@ -40,14 +40,15 @@ export function getSignedAngle(vectorA: Vector3, vectorB: Vector3) {
    * If down (negative), we're going clockwise.
    */
   const perpendicularVector = new Vector3().crossVectors(vectorA, vectorB);
+  const sign = Math.sign(perpendicularVector.y);
 
   /**
-   * This handles an edge case where the sign is `-0`
-   * if the angle is exactly `180deg` */
-  const isAngleNearPi = angle.toFixed(2) === '3.14';
-  const sign = isAngleNearPi ? 1 : Math.sign(perpendicularVector.y);
+   * This handles an edge case where the sign of the cross
+   * product is `-0` because the angle is exactly `180deg`
+   */
+  const isAnglePi = angle > 3 && sign === 0;
 
-  return isAngleNearPi ? angle : angle * sign;
+  return isAnglePi ? angle : angle * sign;
 }
 
 /**
