@@ -163,7 +163,7 @@ export function PolestarCar({
             position={[0, chassisRenderHeight, 0]}
           >
             <mesh castShadow geometry={nodes.Polestar_1_Polestar1_Blackout_0.geometry} material={materials.Polestar1_Blackout} />
-            <mesh castShadow geometry={nodes.Polestar_1_Polestar_1_Car_Paint_0.geometry} material={carPaint} material-color={color} />
+            <mesh name="car_body_mesh" castShadow geometry={nodes.Polestar_1_Polestar_1_Car_Paint_0.geometry} material={carPaint} material-color={color} />
             <mesh castShadow geometry={nodes.Polestar_1_Polestar_1_Chrome_0.geometry} material={materials.Polestar_1_Chrome} />
             <mesh castShadow geometry={nodes.Polestar_1_Polestar_1_Lamps_0.geometry} material={materials.Polestar_1_Lamps} />
             <mesh castShadow geometry={nodes.Polestar_1_Polestar_1_Plastic_0.geometry} material={materials.Polestar_1_Plastic} />

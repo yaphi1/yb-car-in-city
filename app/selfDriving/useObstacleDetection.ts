@@ -24,7 +24,8 @@ export function useObstacleDetection({ isSelfDriving, position, velocity, desire
 
     const raycaster = new Raycaster(origin, direction, near, far);
 
-    const detectedObstacles = raycaster.intersectObjects(carList);
+    const doRecursiveCheck = false;
+    const detectedObstacles = raycaster.intersectObjects(carList, doRecursiveCheck);
 
     if (detectedObstacles.length) {
       setIsObstacleDetected(true);
