@@ -111,6 +111,12 @@ export function ControllableCar({
     vehicleApi.setSteeringValue(nextSteeringValue, 1);
     steeringValue.current = nextSteeringValue;
   }, [vehicleApi]);
+  
+  const runAntiLockBrakes = useCallback(() => {
+    isAntiLockBrakeClamped.current = !isAntiLockBrakeClamped.current;
+    const brakeForce = isAntiLockBrakeClamped.current ? 10 : 0;
+    setBrake({ force: brakeForce });
+  }, [setBrake]);
 
   const {
     isSelfDriving,
@@ -130,12 +136,6 @@ export function ControllableCar({
     startingCheckpointIndex,
     topSpeed,
   });
-
-  const runAntiLockBrakes = useCallback(() => {
-    isAntiLockBrakeClamped.current = !isAntiLockBrakeClamped.current;
-    const brakeForce = isAntiLockBrakeClamped.current ? 10 : 0;
-    setBrake({ force: brakeForce });
-  }, [setBrake]);
 
   const tryToCoast = useCallback(() => {
     const isNotAccelerating = !forwardPressed && !backwardPressed;
@@ -213,7 +213,7 @@ export function ControllableCar({
 
   // Deliberately ignore TypeScript warnings about adding custom properties to window
   // This is for debugging, not prod.
-  if (globalSettings.showCarDebugNumbers) {
+  if (globalSettings.showCarDebugNumbers && isMainCharacter) {
     const typedWindow = window as typeof window & Record<string, unknown>;
     typedWindow.carPosition = position;
     typedWindow.carDirection = horizontalDirection;
