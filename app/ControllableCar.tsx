@@ -213,7 +213,7 @@ export function ControllableCar({
 
   // Deliberately ignore TypeScript warnings about adding custom properties to window
   // This is for debugging, not prod.
-  if (globalSettings.showCarDebugNumbers) {
+  if (globalSettings.showCarDebugNumbers && isMainCharacter) {
     const typedWindow = window as typeof window & Record<string, unknown>;
     typedWindow.carPosition = position;
     typedWindow.carDirection = horizontalDirection;

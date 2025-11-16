@@ -1,6 +1,7 @@
 import { Vector3 } from 'three';
 import { getPointsAlongVectors, getVectorFromStartToTarget } from '../helpers/vectorHelpers';
 import { isDeepStrictEqual } from 'util';
+import { LANE_STARTING_OFFSET, LANE_WIDTH } from './laneMeasurements';
 
 const UP_VECTOR = new Vector3(0, 1, 0);
 
@@ -62,9 +63,7 @@ function getLaneOffsetFromCenter({ startingIntersectionPosition, endingIntersect
   });
   const laneDirection = (new Vector3()).crossVectors(roadVector, UP_VECTOR).normalize();
 
-  const laneStartingOffset = 1.925;
-  const laneWidth = 3.325;
-  const laneDistanceFromMiddle = laneStartingOffset + laneWidth * laneIndex;
+  const laneDistanceFromMiddle = LANE_STARTING_OFFSET + LANE_WIDTH * laneIndex;
 
   const laneOffset = laneDirection.clone().multiplyScalar(laneDistanceFromMiddle);
 

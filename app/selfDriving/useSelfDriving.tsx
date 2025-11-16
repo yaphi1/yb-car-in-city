@@ -127,20 +127,18 @@ export function useSelfDriving({
   }, [journey.lanes.length]);
 
   const avoidObstacles = useCallback(() => {
-    // console.log('yaphi - speed', speed);
     if (!isChangingLanes) {
       if (isObstacleDetected) {
-        console.log('yaphi - isObstacleDetected', isObstacleDetected);
-        // changeLanes();
-        // indexOfLastLaneChange.current = targetCheckpointIndex;
-        // setIsChangingLanes(true);
-
-        console.log('yaphi - isLaneChangeSafe', isLaneChangeSafe);
-
-        // if target lane is also blocked
-        // setBrake({force: 10});
-        // isBraking.current = true;
-        // targetSpeed.current = speed;
+        if (isLaneChangeSafe) {
+          changeLanes();
+          indexOfLastLaneChange.current = targetCheckpointIndex;
+          setIsChangingLanes(true);
+          targetSpeed.current = topSpeed;
+        } else if (!isLaneChangeSafe) {
+          setBrake({force: 10});
+          isBraking.current = true;
+          targetSpeed.current = speed;
+        }
       } else if (!isObstacleDetected) {
         isBraking.current = false;
       }
@@ -151,16 +149,16 @@ export function useSelfDriving({
     if (hasReachedNextCheckpoint) {
       setIsChangingLanes(false);
     }
-  // }, [
-  //   speed,
-  //   setBrake,
-  //   changeLanes,
-  //   isChangingLanes,
-  //   isObstacleDetected,
-  //   targetCheckpointIndex,
-  //   runAntiLockBrakes,
-  // ]);
-  }, [isChangingLanes, targetCheckpointIndex, isObstacleDetected, isLaneChangeSafe]);
+  }, [
+    isChangingLanes,
+    targetCheckpointIndex,
+    isObstacleDetected,
+    isLaneChangeSafe,
+    changeLanes,
+    setBrake,
+    speed,
+    topSpeed,
+  ]);
 
   useEffect(() => {
     avoidObstacles();

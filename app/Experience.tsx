@@ -1,8 +1,7 @@
 import { Suspense, useMemo } from "react";
 import { Canvas } from '@react-three/fiber';
-import { Environment, KeyboardControls, OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { Environment, KeyboardControls } from "@react-three/drei";
 import { Ground } from "./Ground";
-import { ControllableCar } from "./ControllableCar";
 import { Debug, Physics } from "@react-three/cannon";
 import { Vector3 } from "three";
 import { useColors } from "./useColors";
@@ -10,8 +9,8 @@ import { useControls } from "leva";
 import { Fog } from './Fog';
 import { WireframeToggle } from './WireframeToggle';
 import { CityTileModel } from './CityTileModel';
-import { journeys } from "./selfDriving/journeys";
-import { RaycastTest } from "./experiments/RaycastTest";
+import { TrafficDemo } from './carConfigurations/TrafficDemo';
+import { LaneSafetyExample } from './carConfigurations/LaneSafetyExample';
 
 const startingPosition = new Vector3(156, 1, -80);
 // const startPositionToTestOrbit = new Vector3(148, 1, -80);
@@ -78,107 +77,10 @@ export function Experience() {
               <Fog color="#ffe8e8" near={200} far={2000} />
               <Ground />
               {cityTiles}
-              <ControllableCar
-                color={carColor}
-                isMainCharacter={true}
-                journey={journeys.clockwiseBlock}
-                startingLaneIndex={1}
-                startingCheckpointIndex={6}
-                topSpeed={10}
-              />
-              <ControllableCar
-                color={carColor}
-                journey={journeys.clockwiseBlock}
-                startingLaneIndex={1}
-                startingCheckpointIndex={7}
-                topSpeed={5}
-              />
-              <ControllableCar
-                color={carColor}
-                journey={journeys.clockwiseBlock}
-                startingLaneIndex={0}
-                startingCheckpointIndex={7}
-                topSpeed={5}
-              />
 
-              {/* <ControllableCar
-                color={carColor}
-                isMainCharacter={true}
-                journey={journeys.clockwiseBlock}
-                startingLaneIndex={1}
-                startingCheckpointIndex={1}
-                topSpeed={10}
-              />
-              <ControllableCar
-                color="#00aa55"
-                journey={journeys.clockwiseBlock}
-                startingLaneIndex={1}
-                // startingCheckpointIndex={2}
-                startingCheckpointIndex={5}
-                topSpeed={5}
-              />
-              <ControllableCar
-                color="#ddaa00"
-                journey={journeys.clockwiseBlock}
-                startingLaneIndex={0}
-                // startingCheckpointIndex={3}
-                startingCheckpointIndex={6}
-                topSpeed={7}
-              />
-              <ControllableCar
-                color="#0098db"
-                journey={journeys.counterclockwiseBlock}
-                startingLaneIndex={0}
-                // startingCheckpointIndex={0}
-                startingCheckpointIndex={30}
-                topSpeed={5}
-              />
-              <ControllableCar
-                color="#ffffff"
-                journey={journeys.counterclockwiseBlock}
-                startingLaneIndex={0}
-                // startingCheckpointIndex={4}
-                startingCheckpointIndex={2}
-                topSpeed={5}
-              />
+              <TrafficDemo carColor={carColor} />
 
-
-
-              <ControllableCar
-                color="#333333"
-                journey={journeys.counterclockwiseBlock}
-                startingLaneIndex={0}
-                startingCheckpointIndex={10}
-                topSpeed={5}
-              />
-              <ControllableCar
-                color="#0098db"
-                journey={journeys.counterclockwiseBlock}
-                startingLaneIndex={0}
-                startingCheckpointIndex={13}
-                topSpeed={5}
-              />
-              <ControllableCar
-                color="#858d96"
-                journey={journeys.counterclockwiseBlock}
-                startingLaneIndex={1}
-                startingCheckpointIndex={12}
-                topSpeed={7}
-              />
-              <ControllableCar
-                color="#a79d72"
-                journey={journeys.clockwiseBlock}
-                startingLaneIndex={0}
-                startingCheckpointIndex={0}
-                topSpeed={5}
-              />
-              <ControllableCar
-                color="#ffffff"
-                journey={journeys.clockwiseBlock}
-                startingLaneIndex={0}
-                startingCheckpointIndex={1}
-                topSpeed={5}
-              /> */}
+              {/* <LaneSafetyExample carColor={carColor} /> */}
 
             {/* </Debug> */}
 
