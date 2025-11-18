@@ -14,7 +14,7 @@ import { getSignedAngle } from "./helpers/vectorHelpers";
 import { journeys } from "./selfDriving/journeys";
 import { getOrientationAtJourneyStart, Journey } from "./selfDriving/navigation";
 
-const maxSteeringAngle = 0.4;
+const maxSteeringAngle = 0.35;
 const startingVelocity = new Vector3(0, 0, 0);
 const north = new Vector3(0, 0, -1);
 

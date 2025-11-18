@@ -11,6 +11,7 @@ import { WireframeToggle } from './WireframeToggle';
 import { CityTileModel } from './CityTileModel';
 import { TrafficDemo } from './carConfigurations/TrafficDemo';
 import { LaneSafetyExample } from './carConfigurations/LaneSafetyExample';
+import { SoloCar } from './carConfigurations/SoloCar';
 
 const startingPosition = new Vector3(156, 1, -80);
 // const startPositionToTestOrbit = new Vector3(148, 1, -80);
@@ -78,8 +79,8 @@ export function Experience() {
               <Ground />
               {cityTiles}
 
+              {/* <SoloCar carColor={carColor} /> */}
               <TrafficDemo carColor={carColor} />
-
               {/* <LaneSafetyExample carColor={carColor} /> */}
 
             {/* </Debug> */}

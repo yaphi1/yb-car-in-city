@@ -23,13 +23,23 @@ function getDesiredVelocity({ position, target, speed } : {
   return desiredVelocity;
 }
 
+/**
+ * The turn angle uses a factor that shrinks as
+ * we approach our desired direction.
+ * That creates a smooth, natural turning feel.
+ * Without that factor, the turns start to look
+ * very robotic.
+ */
 function getTurnAngle({ velocity, desiredVelocity, maxSteeringAngle } : {
   velocity: Vector3;
   desiredVelocity: Vector3;
   maxSteeringAngle: number;
 }) {
-  const steeringDirection = getSignedAngle(velocity, desiredVelocity);
-  const turnAngle = steeringDirection * maxSteeringAngle;
+  const angleToDesiredDirecton = getSignedAngle(velocity, desiredVelocity);
+  const turnFactor = MathUtils.clamp(2 * angleToDesiredDirecton, -1, 1);
+
+  const turnAngle = turnFactor * maxSteeringAngle;
+
   return turnAngle;
 }
 
@@ -217,7 +227,7 @@ export function useSelfDriving({
     const shouldTurn = angleToTarget > angleTolerance;
 
     const targetSteeringValue = shouldTurn ? turnAngle : 0;
-    const lerpFactor = 5 * delta;
+    const lerpFactor = 2 * delta;
     const updatedSteeringValue = MathUtils.lerp(steeringValue, targetSteeringValue, lerpFactor);
 
     updateSteering(updatedSteeringValue);
