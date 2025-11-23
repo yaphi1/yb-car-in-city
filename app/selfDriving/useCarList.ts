@@ -9,7 +9,7 @@ export function useCarList() {
   useEffect(() => {
     const cars: Array<Object3D> = [];
     scene.traverse((obj: Object3D) => {
-      if (obj.name === 'car_body_mesh') {
+      if (obj.name === 'car_hitbox') {
         cars.push(obj);
       }
     });

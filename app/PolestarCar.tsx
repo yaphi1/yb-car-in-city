@@ -21,6 +21,8 @@ import { useGLTF } from '@react-three/drei';
 import { GLTF } from 'three-stdlib';
 import { GroupProps, useFrame } from '@react-three/fiber';
 
+const CAR_HITBOX_SIZE: [number, number, number] = [2, 1.8, 4.7];
+
 type GLTFResult = GLTF & {
   nodes: {
     Brake_disc_Brake_Disc_0: THREE.Mesh
@@ -157,6 +159,16 @@ export function PolestarCar({
     <>
       <group ref={chassisBodyRef} name="car" {...props} dispose={null}>
         <group>
+          <mesh
+            name="car_hitbox"
+            visible={false}
+            userData={{
+              carPosition: position,
+              size: CAR_HITBOX_SIZE,
+            }}
+          >
+            <boxGeometry args={CAR_HITBOX_SIZE} />
+          </mesh>
           <group
             name="carBody"
             rotation={[-Math.PI / 2, 0, chassisRenderRotation]}
